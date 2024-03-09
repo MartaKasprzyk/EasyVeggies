@@ -46,7 +46,7 @@ class GrowVeggie(models.Model):
     veggie = models.ForeignKey(Veggie, on_delete=models.CASCADE)
     sun = models.ManyToManyField(Scale, related_name='sun')
     water = models.ManyToManyField(Scale, related_name='water')
-    ground = models.ManyToManyField(Scale, related_name='ground')
+    soil = models.ManyToManyField(Scale, related_name='ground')
     sow = models.ManyToManyField(Month, related_name='sow')
     harvest = models.ManyToManyField(Month, related_name='harvest')
     comment = models.TextField()
