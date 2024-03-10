@@ -2,10 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="shortcut icon" type="x-icon" href="/static/images/tomato.png">
+    <link rel="stylesheet" href="/static/css/styles.css">
     <title>Easy Veggies</title>
 </head>
 <body>
-<div><img src="/static/images/logo.png"></div>
+<div>
+    <div class="logo">
+       <a href="{% url "base" %}"><img src="/static/images/logo_veggies.png"></a> 
+    </div>    
+    <div class="topnav">    
+      <a class="active" href="{% url "base" %}">HOME</a>
+      <a href="#news">PLAN</a>
+      <a href="#contact">SEEDS</a>
+      <a href="#about">GROW</a>
+      <a href="#about">LOGIN</a>
+    </div>
+</div>
+
 <div>Hello world</div>
 </body>
 </html>
