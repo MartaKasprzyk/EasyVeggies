@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+
 PROGRESS = {
     (1, "sown"),
     (2, "growing"),
@@ -29,14 +30,21 @@ class Month(models.Model):
     order = models.IntegerField(unique=True)
 
 
-class Scale(models.Model):
+class SunScale(models.Model):
+    name = models.CharField(max_length=20)
+
+
+class WaterScale(models.Model):
+    name = models.CharField(max_length=20)
+
+
+class SoilScale(models.Model):
     name = models.CharField(max_length=20)
 
 
 class Seed(models.Model):
     veggie = models.ForeignKey(Veggie, on_delete=models.CASCADE)
     variety = models.CharField(max_length=50)
-    family = models.ForeignKey(VeggieFamily, on_delete=models.CASCADE)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     comment = models.TextField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -44,19 +52,30 @@ class Seed(models.Model):
 
 class GrowVeggie(models.Model):
     veggie = models.ForeignKey(Veggie, on_delete=models.CASCADE)
-    sun = models.ManyToManyField(Scale, related_name='sun')
-    water = models.ManyToManyField(Scale, related_name='water')
-    soil = models.ManyToManyField(Scale, related_name='soil')
-    sow = models.ManyToManyField(Month, related_name='sow')
-    harvest = models.ManyToManyField(Month, related_name='harvest')
+    sun = models.ManyToManyField(SunScale)
+    water = models.ManyToManyField(WaterScale)
+    soil = models.ManyToManyField(SoilScale)
+    sow = models.ManyToManyField(Month)
     comment = models.TextField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Plan(models.Model):
     name = models.CharField(max_length=50)
-    bed = models.IntegerField()
-    veggie_family = models.ForeignKey(VeggieFamily, on_delete=models.CASCADE)
-    veggies = models.ManyToManyField(Veggie)
-    progress = models.IntegerField(choices=PROGRESS)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Bed(models.Model):
+    name = models.CharField(max_length=50)
+    sun = models.ForeignKey(SunScale, on_delete=models.CASCADE)
+    water = models.ForeignKey(WaterScale, on_delete=models.CASCADE)
+    soil = models.ForeignKey(SoilScale, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class VeggieBed(models.Model):
+    veggie = models.ForeignKey(Veggie, on_delete=models.CASCADE)
+    bed = models.ForeignKey(Bed, on_delete=models.CASCADE)
+    progress = models.IntegerField(choices=PROGRESS)
+    plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
+
