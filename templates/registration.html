@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{%  block content %}
+    
+<div>
+    {% if messages %}
+        <ul class="messagelist">
+            {% for message in messages %}
+                <li>{{ message.message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+<p></p>    
+<p></p>   
+    {{ error }}
+<form method="post">
+    {% csrf_token %}
+    <label for="username">Username </label>
+    <input type="text" name="username" placeholder="username">
+    <label for="password">Password </label>
+    <input type="password" name="password" placeholder="password">
+    <label for="password_repeat">Password </label>
+    <input type="text" name="password_repeat" placeholder="repeat password">
+    <input type="submit" value="Register">
+</form>
+    
+{% endblock %}
