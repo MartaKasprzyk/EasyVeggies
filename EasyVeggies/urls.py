@@ -25,4 +25,7 @@ urlpatterns = [
     path('register/', user_views.RegisterUserView.as_view(), name='registration'),
     path('login/', user_views.LoginView.as_view(), name='login'),
     path('logout/', user_views.LogoutView.as_view(), name='logout'),
-]
+    path('veggie/add/', views.VeggieCreateView.as_view(), name='veggie_add'),
+    path('company/add/', views.CompanyCreateView.as_view(), name='company_add'),
+    path('seed/add/', views.SeedCreateView.as_view(), name='seed_add'),
+    ]
