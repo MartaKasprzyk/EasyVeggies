@@ -17,8 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from GrowVeggies import views
+from Users import views as user_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.BaseView.as_view(), name='base'),
+    path('register/', user_views.RegisterUserView.as_view(), name='registration'),
+    path('login/', user_views.LoginView.as_view(), name='login'),
+    path('logout/', user_views.LogoutView.as_view(), name='logout'),
 ]

@@ -20,18 +20,62 @@
 
 /* Change the color of links on hover */
 .topnav a:hover {
-  background-color: #ddd;
+  background-color: #b4b3b3;
   color: black;
 }
 
-/* Add a color to the active/current link */
-.topnav a.active {
-  background-color: #60a670;
-  color: white;
-}
+/*!* Add a color to the active/current link *!*/
+/*.topnav a.active {*/
+/*  background-color: #60a670;*/
+/*  color: white;*/
+/*}*/
 
 .logo{
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.log_and_register{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 350px;
+  width: 400px;
+  border-radius: 15px;
+  background-color: #98DE5B; /* For browsers that do not support gradients */
+  background-image: linear-gradient(to top right, #98DE5B, #08E1AE);
+  color: #4b4b4b;
+  text-align: center;
+}
+
+.btn{
+  background-color: #333;
+  border: none;
+  border-radius: 15px;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  align-items: center;
+  width: 100%;
+  color: white;
+}
+
+.btn:hover{
+  background-color: #b4b3b3;
+  color: black;
+}
+
+.input{
+  border: none;
+  border-radius: 15px;
+  padding: 10px 15px;
+  text-align: center;
 }
