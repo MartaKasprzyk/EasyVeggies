@@ -13,15 +13,17 @@
 <p></p>    
 <p></p>   
     {{ error }}
-<form method="post">
-    {% csrf_token %}
-    <label for="username">Username </label>
-    <input type="text" name="username" placeholder="username">
-    <label for="password">Password </label>
-    <input type="password" name="password" placeholder="password">
-    <label for="password_repeat">Password </label>
-    <input type="text" name="password_repeat" placeholder="repeat password">
-    <input type="submit" value="Register">
-</form>
+    
+<section>   
+    <div class="log_and_register">
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="USERNAME" class="input"><br><br>
+            <input type="password" name="password" placeholder="PASSWORD" class="input"><br><br>
+            <input type="password" name="password_repeat" placeholder="REPEAT PASSWORD" class="input"><br><br>
+            <input type="submit" value="REGISTER" class="btn"><br><br><br>
+        </form>
+    </div>
+</section>
     
 {% endblock %}
