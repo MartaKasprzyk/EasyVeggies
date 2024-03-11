@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.views import View
@@ -6,6 +7,7 @@ from django.contrib import messages
 
 
 class RegisterUserView(View):
+
     def get(self, request):
         return render(request, 'registration.html')
 
@@ -14,16 +16,21 @@ class RegisterUserView(View):
         password = request.POST.get('password')
         password_repeat = request.POST.get('password_repeat')
 
-        if password != password_repeat:
-            return render(request, 'registration.html', {'error': 'Passwords are different!'})
+        try:
+            if password != password_repeat:
+                return render(request, 'registration.html', {'error': 'Passwords are different! '
+                                                                      'Please try again.'})
 
-        user = User.objects.create(username=username)
-        user.set_password(password)
-        user.save()
+            user = User.objects.create(username=username)
+            user.set_password(password)
+            user.save()
 
-        messages.info(request, "User registered successfully.")
+            messages.info(request, "User registered successfully.")
+            return redirect("base")
 
-        return redirect("register")
+        except IntegrityError:
+            return render(request, 'registration.html', {'error': 'This username is already taken. '
+                                                                  'Please try again.'})
 
 
 class LoginView(View):
@@ -38,7 +45,7 @@ class LoginView(View):
         if user is not None:
             login(request, user)
             return redirect(url)
-        return render(request, 'login.html')
+        return render(request, 'login.html', {'error': 'Login unsuccessful. Please try again.'})
 
 
 class LogoutView(View):
@@ -46,7 +53,3 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect('base')
-
-
-
-

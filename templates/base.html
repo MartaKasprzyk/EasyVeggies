@@ -26,11 +26,19 @@
 
 <br>
 <div>
-{% if user.is_authenticated %}
-    Welcome {{ user.username }}! 
-{% endif %}
+    {% if user.is_authenticated %}
+        Welcome {{ user.username }}! 
+    {% endif %}
 </div>
-<br>
+<div>
+    {% if messages %}
+        <ul class="messagelist">
+            {% for message in messages %}
+                <li>{{ message.message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
 
 <div>Hello world</div>
 
