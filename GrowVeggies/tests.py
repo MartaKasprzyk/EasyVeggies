@@ -154,3 +154,13 @@ def test_seeds_list_view_get(user, seeds):
     response = client.get(url)
     assert response.status_code == 200
     assert list(response.context['seeds']) == seeds[0]
+
+
+@pytest.mark.django_db
+def test_seeds_list_view_get_other_user_seeds(user, seeds):
+    client = Client()
+    client.force_login(user)
+    url = reverse('seeds')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert not list(response.context['seeds']) == seeds[1]
