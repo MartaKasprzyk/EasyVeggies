@@ -11,7 +11,7 @@ class VeggieCreateForm(forms.ModelForm):
         }
 
 
-class VeggieFlowUpdateForm(forms.ModelForm):
+class VeggieUpdateForm(forms.ModelForm):
     class Meta:
         model = Veggie
         fields = "__all__"
@@ -26,7 +26,7 @@ class CompanyCreateForm(forms.ModelForm):
         fields = "__all__"
 
 
-class CompanyFlowUpdateForm(forms.ModelForm):
+class CompanyUpdateForm(forms.ModelForm):
     class Meta:
         model = Company
         fields = "__all__"
@@ -42,11 +42,11 @@ class SeedCreateForm(forms.ModelForm):
         }
 
 
-class SeedFlowUpdateForm(forms.ModelForm):
+class SeedUpdateForm(forms.ModelForm):
     class Meta:
-    model = Seed
-    fields = ['veggie', 'variety', 'company', 'comment']
-    widgets = {
-        'veggie': forms.Select(),
-        'company': forms.Select(),
-    }
+        model = Seed
+        fields = ['veggie', 'variety', 'company', 'comment']
+        widgets = {
+            'veggie': forms.Select(),
+            'company': forms.Select(),
+        }

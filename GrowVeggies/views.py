@@ -63,7 +63,7 @@ class CompanyUpdateView(LoginRequiredMixin, View):
 
     def get(self, request, pk):
         company = Company.objects.get(pk=pk)
-        form = CopmanyUpdateForm(instance=company)
+        form = CompanyUpdateForm(instance=company)
         return render(request, 'form.html', {'form': form})
 
     def post(self, request, pk):

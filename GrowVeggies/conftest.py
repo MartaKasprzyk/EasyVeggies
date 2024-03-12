@@ -1,7 +1,7 @@
 import pytest
 from django.contrib.auth.models import User
 
-from GrowVeggies.models import Veggie, Company, VeggieFamily
+from GrowVeggies.models import Veggie, Company, VeggieFamily, Seed
 
 
 @pytest.fixture
@@ -18,9 +18,12 @@ def veggie(user, family):
 def family(user):
     return VeggieFamily.objects.create(name='Family', order='1')
 
+
 @pytest.fixture
 def company(user):
     return Company.objects.create(name='Company')
 
 
-
+@pytest.fixture
+def seed(user, veggie, company):
+    return Seed.objects.create(owner=user, veggie=veggie, variety='variety', company=company, comment='comment')

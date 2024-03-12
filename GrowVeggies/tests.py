@@ -45,6 +45,15 @@ def test_veggie_create_view_post(user, family):
 
 
 @pytest.mark.django_db
+def test_veggie_update_view_get(user, veggie):
+    client = Client()
+    client.force_login(user)
+    url = reverse('veggie_update', kwargs={'pk': veggie.pk})
+    response = client.get(url, follow=True)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
 def test_company_create_view_get(user):
     client = Client()
     client.force_login(user)
@@ -64,6 +73,14 @@ def test_company_create_view_post(user):
     response = client.post(url, data, follow=True)
     assert response.status_code == 200
     assert Company.objects.get(name='Company_name')
+
+@pytest.mark.django_db
+def test_company_update_view_get(user, company):
+    client = Client()
+    client.force_login(user)
+    url = reverse('company_update', kwargs={'pk': company.pk})
+    response = client.get(url, follow=True)
+    assert response.status_code == 200
 
 
 @pytest.mark.django_db
@@ -87,3 +104,12 @@ def test_seed_create_view_post(user, veggie, company):
     assert response.status_code == 200
     assert Seed.objects.get(owner=user, veggie=1, variety='variety', company=1, comment='comment')
     # if running single test: veggie,company=1; if running all tests veggie,company=2; preserved info about prev created objs?
+
+
+@pytest.mark.django_db
+def test_seed_update_view_get(user, seed, veggie, company):
+    client = Client()
+    client.force_login(user)
+    url = reverse('seed_update', kwargs={'pk': seed.pk})
+    response = client.get(url, follow=True)
+    assert response.status_code == 200
