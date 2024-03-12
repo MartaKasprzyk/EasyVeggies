@@ -15,15 +15,22 @@ class VeggieFamily(models.Model):
     name = models.CharField(max_length=30)
     order = models.IntegerField()
 
+    def __str__(self):
+        return f'{self.name}'
+
 
 class Veggie(models.Model):
     name = models.CharField(max_length=30)
     family = models.ForeignKey(VeggieFamily, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.name}'
 
 class Company(models.Model):
     name = models.CharField(max_length=60)
 
+    def __str__(self):
+        return f'{self.name}'
 
 class Month(models.Model):
     name = models.CharField(max_length=20)
