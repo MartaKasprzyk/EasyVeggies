@@ -25,4 +25,12 @@ urlpatterns = [
     path('register/', user_views.RegisterUserView.as_view(), name='registration'),
     path('login/', user_views.LoginView.as_view(), name='login'),
     path('logout/', user_views.LogoutView.as_view(), name='logout'),
-]
+    path('veggie/add/', views.VeggieCreateView.as_view(), name='veggie_add'),
+    # path('veggie/update/<int:pk>/', views.VeggieUpdateView.as_view(), name='veggie_update'),
+    path('company/add/', views.CompanyCreateView.as_view(), name='company_add'),
+    # path('company/update/<int:pk>/', views.CompanyUpdateView.as_view(), name='company_update'),
+    path('seed/add/', views.SeedCreateView.as_view(), name='seed_add'),
+    path('seed/update/<int:pk>/', views.SeedUpdateView.as_view(), name='seed_update'),
+    path('seed/delete/<int:pk>/', views.SeedDeleteView.as_view(), name='seed_delete'),
+    path('seeds/', views.SeedsListView.as_view(), name='seeds'),
+    ]
