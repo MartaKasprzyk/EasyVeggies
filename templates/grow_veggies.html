@@ -16,10 +16,18 @@
                  <tr>
                  <td>{{ forloop.counter }}</td>
                  <td>{{ grow_veggie.veggie }}</td>
-                 <td>{{ grow_veggie.sun }}</td>
-                 <td>{{ grow_veggie.water }}</td>
-                 <td>{{ grow_veggie.soil }}</td>
-                 <td>{{ grow_veggie.sow }}</td>
+                 <td>{% for sun in grow_veggie.sun.all %}
+                        {{ sun }}, 
+                     {% endfor %}</td>
+                 <td>{% for water in grow_veggie.water.all %}
+                        {{ water }}, 
+                     {% endfor %}</td>
+                 <td>{% for soil in grow_veggie.soil.all %}
+                        {{ soil }}, 
+                     {% endfor %}</td>
+                 <td>{% for month in grow_veggie.sow.all %}
+                        {{ month }}, 
+                     {% endfor %}</td>
                  <td>{{ grow_veggie.comment }}</td>
             {% endfor %}
     </table>  

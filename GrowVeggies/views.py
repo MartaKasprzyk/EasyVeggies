@@ -150,13 +150,16 @@ class GrowVeggieCreateView(LoginRequiredMixin, View):
         form = GrowVeggieCreateForm(request.POST)
         if form.is_valid():
             veggie = form.cleaned_data['veggie']
-            sun = form.cleaned_data['sun']
-            water = form.cleaned_data['water']
-            soil = form.cleaned_data['soil']
-            sow = form.cleaned_data['sow']
+            sun = form.cleaned_data.get('sun')
+            water = form.cleaned_data.get('water')
+            soil = form.cleaned_data.get('soil')
+            sow = form.cleaned_data.get('sow')
             comment = form.cleaned_data['comment']
-            GrowVeggie.objects.create(owner=user, veggie=veggie, sun=sun, water=water, soil=soil, sow=sow,
-                                      comment=comment)
+            grow_veggie = GrowVeggie.objects.create(owner=user, veggie=veggie, comment=comment)
+            grow_veggie.sun.set(sun)
+            grow_veggie.water.set(water)
+            grow_veggie.soil.set(soil)
+            grow_veggie.sow.set(sow)
             return redirect('grow_veggie_add')
         return render(request, 'grow_veggie_add.html', {'form': form})
 
