@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+    All your seeds:
+    
+    <table>
+        <tr>
+            <th>lp</th>
+            <th>VEGGIE</th>
+            <th>VARIETY</th>
+            <th>COMPANY</th>
+            <th>COMMENT</th>
+        </tr>
+             {% for seed in seeds %}
+                 <tr>
+                 <td>{{ forloop.counter }}</td>
+                 <td>{{ seed.veggie }}</td>
+                 <td>{{ seed.variety }}</td>
+                 <td>{{ seed.company }}</td>
+                 <td>{{ seed.comment }}</td>
+            {% endfor %}
+    </table>  
+{% endblock %}

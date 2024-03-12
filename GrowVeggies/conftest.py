@@ -8,6 +8,9 @@ from GrowVeggies.models import Veggie, Company, VeggieFamily, Seed
 def user():
     return User.objects.create_user(username='test', password='testing')
 
+@pytest.fixture
+def user2():
+    return User.objects.create_user(username='test2', password='testing2')
 
 @pytest.fixture
 def veggie(user, family):

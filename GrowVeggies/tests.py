@@ -1,6 +1,7 @@
 import pytest
 from django.test import Client
 from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist
 
 from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm
 from GrowVeggies.models import Seed, Veggie, Company
@@ -110,3 +111,37 @@ def test_seed_update_view_get(user, seed, veggie, company):
     url = reverse('seed_update', kwargs={'pk': seed.pk})
     response = client.get(url, follow=True)
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_seed_delete_view_get(seed):
+    client = Client()
+    client.force_login(seed.owner)
+    url = reverse('seed_delete', kwargs={'pk': seed.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['seed'] == seed
+
+
+@pytest.mark.django_db
+def test_seed_delete_view_post(seed):
+    client = Client()
+    client.force_login(seed.owner)
+    url = reverse('seed_delete', kwargs={'pk': seed.pk})
+    data = {'delete': 'YES'}
+    response = client.post(url, data, follow=True)
+    assert response.status_code == 200
+    with pytest.raises(ObjectDoesNotExist):
+        Seed.objects.get(pk=seed.pk)
+
+
+@pytest.mark.django_db
+def test_seed_delete_view_post(seed, user2):
+    client = Client()
+    client.force_login(user2)
+    url = reverse('seed_delete', kwargs={'pk': seed.pk})
+    data = {'delete': 'YES'}
+    response = client.post(url, data, follow=True)
+    assert response.status_code == 403
+    assert Seed.objects.get(pk=seed.pk)
+
