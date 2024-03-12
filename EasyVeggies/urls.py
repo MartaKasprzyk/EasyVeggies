@@ -33,4 +33,8 @@ urlpatterns = [
     path('seed/update/<int:pk>/', views.SeedUpdateView.as_view(), name='seed_update'),
     path('seed/delete/<int:pk>/', views.SeedDeleteView.as_view(), name='seed_delete'),
     path('seeds/', views.SeedsListView.as_view(), name='seeds'),
+    path('growveggie/add/', views.GrowVeggieCreateView.as_view(), name='grow_veggie_add'),
+    path('growveggie/update/<int:pk>/', views.GrowVeggieUpdateView.as_view(), name='grow_veggie_update'),
+    path('growveggie/delete/<int:pk>/', views.GrowVeggieDeleteView.as_view(), name='grow_veggie_delete'),
+    path('growveggies/', views.GrowVeggieListView.as_view(), name='grow_veggies'),
     ]

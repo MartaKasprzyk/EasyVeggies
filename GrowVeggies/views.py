@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from GrowVeggies.models import Seed, Veggie, Company
-from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm
-from GrowVeggies.forms import VeggieUpdateForm, CompanyUpdateForm, SeedUpdateForm
+from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie
+from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm, GrowVeggieCreateForm
+from GrowVeggies.forms import VeggieUpdateForm, CompanyUpdateForm, SeedUpdateForm, GrowVeggieUpdateForm
 
 
 class BaseView(View):
@@ -137,3 +137,68 @@ class SeedsListView(LoginRequiredMixin, View):
         user = request.user
         seeds = Seed.objects.filter(owner=user)
         return render(request, 'seeds.html', {'seeds': seeds})
+
+
+class GrowVeggieCreateView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        form = GrowVeggieCreateForm()
+        return render(request, 'grow_veggie_add.html', {'form': form})
+
+    def post(self, request):
+        user = request.user
+        form = GrowVeggieCreateForm(request.POST)
+        if form.is_valid():
+            veggie = form.cleaned_data['veggie']
+            sun = form.cleaned_data['sun']
+            water = form.cleaned_data['water']
+            soil = form.cleaned_data['soil']
+            sow = form.cleaned_data['sow']
+            comment = form.cleaned_data['comment']
+            GrowVeggie.objects.create(owner=user, veggie=veggie, sun=sun, water=water, soil=soil, sow=sow,
+                                      comment=comment)
+            return redirect('grow_veggie_add')
+        return render(request, 'grow_veggie_add.html', {'form': form})
+
+
+class GrowVeggieUpdateView(LoginRequiredMixin, View):
+
+    def get(self, request, pk):
+        grow_veggie = GrowVeggie.objects.get(pk=pk)
+        form = GrowVeggieUpdateForm(instance=grow_veggie)
+        return render(request, 'form.html', {'form': form})
+
+    def post(self, request, pk):
+        grow_veggie = GrowVeggie.objects.get(pk=pk)
+        form = GrowVeggieUpdateForm(request.POST, instance=grow_veggie)
+        if form.is_valid():
+            form.save()
+            return redirect('grow_veggie_add', grow_veggie.pk)
+        return render(request, 'form.html', {'form': form})
+
+
+class GrowVeggieDeleteView(UserPassesTestMixin, View):
+
+    def test_func(self):
+        user = self.request.user
+        grow_veggie = GrowVeggie.objects.get(pk=self.kwargs['pk'])
+        return grow_veggie.owner == user
+
+    def get(self, request, pk):
+        grow_veggie = GrowVeggie.objects.get(pk=pk)
+        return render(request, 'grow_veggie_delete.html', {"grow_veggie": grow_veggie})
+
+    def post(self, request, pk):
+        delete = request.POST.get('delete')
+        if delete == 'YES':
+            grow_veggie = GrowVeggie.objects.get(pk=pk)
+            grow_veggie.delete()
+        return redirect('grow_veggies')
+
+
+class GrowVeggieListView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        user = request.user
+        grow_veggies = GrowVeggie.objects.filter(owner=user)
+        return render(request, 'grow_veggies.html', {'grow_veggies': grow_veggies})

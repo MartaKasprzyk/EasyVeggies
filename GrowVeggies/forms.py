@@ -1,5 +1,5 @@
 from django import forms
-from GrowVeggies.models import Seed, Veggie, Company
+from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie
 
 
 class VeggieCreateForm(forms.ModelForm):
@@ -49,4 +49,30 @@ class SeedUpdateForm(forms.ModelForm):
         widgets = {
             'veggie': forms.Select(),
             'company': forms.Select(),
+        }
+
+
+class GrowVeggieCreateForm(forms.ModelForm):
+    class Meta:
+        model = GrowVeggie
+        fields = ['veggie', 'sun', 'water', 'soil', 'sow', 'comment']
+        widgets = {
+            'veggie': forms.Select(),
+            'sun': forms.CheckboxSelectMultiple(),
+            'water': forms.CheckboxSelectMultiple(),
+            'soil': forms.CheckboxSelectMultiple(),
+            'sow': forms.CheckboxSelectMultiple(),
+        }
+
+
+class GrowVeggieUpdateForm(forms.ModelForm):
+    class Meta:
+        model = GrowVeggie
+        fields = ['veggie', 'sun', 'water', 'soil', 'sow', 'comment']
+        widgets = {
+            'veggie': forms.Select(),
+            'sun': forms.CheckboxSelectMultiple(),
+            'water': forms.CheckboxSelectMultiple(),
+            'soil': forms.CheckboxSelectMultiple(),
+            'sow': forms.CheckboxSelectMultiple(),
         }
