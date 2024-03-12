@@ -1,7 +1,7 @@
 import pytest
 from django.contrib.auth.models import User
 
-from GrowVeggies.models import Veggie, Company, VeggieFamily, Seed
+from GrowVeggies.models import Veggie, Company, VeggieFamily, Seed, GrowVeggie, SunScale, WaterScale, SoilScale, Month
 
 
 @pytest.fixture
@@ -42,3 +42,45 @@ def seeds(user, user2, veggie, company):
         seeds1.append(seed1)
         seeds2.append(seed2)
     return seeds1, seeds2
+
+
+@pytest.fixture
+def sun_scale():
+    scale = []
+    for x in range(3):
+        sun = SunScale.objects.create(name='name')
+        scale.append(sun)
+    return scale
+
+
+@pytest.fixture
+def water_scale():
+    scale = []
+    for x in range(3):
+        water = WaterScale.objects.create(name='name')
+        scale.append(water)
+    return scale
+
+
+@pytest.fixture
+def soil_scale():
+    scale = []
+    for x in range(3):
+        soil = SoilScale.objects.create(name='name')
+        scale.append(soil)
+    return scale
+
+
+@pytest.fixture
+def month():
+    months = []
+    for x in range(12):
+        month = Month.objects.create(name='name')
+        months.append(month)
+    return months
+
+
+@pytest.fixture
+def grow_veggie(user, veggie, sun_scale, water_scale, soil_scale, month):
+    return GrowVeggie.objects.create(owner=user, veggie=veggie, sun_scale=sun_scale, water_scale=water_scale,
+                                     soil_scale=soil_scale, month=month, comment='comment')
