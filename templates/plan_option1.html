@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+        Dear Gardener - How many raised beds do you have?
+        <form method="post">
+            {% csrf_token %}
+            <input type="number" name="beds_amount" placeholder="0">
+            <input type="submit" value="Plan my veggie beds!">
+        </form>
+   
+    
+    {% if beds_amount > 0 %}
+        <table class="plan_table">
+            <tr>
+                <th>lp</th>
+                <th>BED</th>
+                <th>VEGGIE FAMILY</th>
+                <th>VEGGIES</th>
+                <th>PROGRESS</th>
+            </tr>
+            {% for bed in beds %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ bed }} {{ forloop.counter }}</td>
+                <td><select name="family">
+                    {% for family in families %}
+                        <option value="{{ family.id }}">{{ family.name }}</option>      
+                    {% endfor %}
+                </select></td>
+                <td><select name="veggie">
+                    {% for veggie in veggies %}
+                        <option value="{{ veggie.id }}">{{ veggie.name }}</option>      
+                    {% endfor %}
+                </select></td>
+                <td><select name="progress">
+                    {% for key, value in progress %}
+                        <option value="{{ key }}">{{ value }}</option>      
+                    {% endfor %}
+                </select></td>
+                
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    
+    
+{% endblock %}

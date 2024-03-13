@@ -4,7 +4,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, VeggieBed, VeggieFamily
 from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm, GrowVeggieCreateForm
 from GrowVeggies.forms import VeggieUpdateForm, CompanyUpdateForm, SeedUpdateForm, GrowVeggieUpdateForm
-
+# from GrowVeggies.forms import PlanOption1CreateForm
+from GrowVeggies.models import PROGRESS
 
 class BaseView(View):
 
@@ -215,6 +216,26 @@ class PlanView(LoginRequiredMixin, View):
 class PlanCreateFirstView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'plan_option1.html')
+
+    def post(self, request):
+        beds_amount = int(request.POST.get('beds_amount'))
+        beds = []
+        for bed in range(beds_amount):
+            bed = 'name'
+            beds.append(bed)
+
+        veggies = Veggie.objects.all()
+        families = VeggieFamily.objects.all()
+        progress = PROGRESS
+        # if beds_amount > 0:
+        #     user = request.user
+        #     for bed in range(beds_amount):
+        #         Bed.objects.create(owner=user)
+        #
+        # beds = Bed.objects.all()
+
+        return render(request, 'plan_option1.html', {'beds_amount': beds_amount, 'beds': beds,
+                                                     'veggies': veggies, 'families': families, 'progress':progress})
 
 
 class PlanCreateBasedOnLastView(LoginRequiredMixin, View):

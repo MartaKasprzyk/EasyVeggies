@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    Dear Gardener - How many raised beds do you have?
+    <form method="post">
+        {% csrf_token %}
+        <input type="number" name="beds_amount" placeholder="0">
+        <input type="submit" value="Plan my veggie beds!">
+    </form>
+{% endblock %}
