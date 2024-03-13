@@ -229,7 +229,7 @@ def test_grow_veggie_delete_view_post(grow_veggie):
 
 
 @pytest.mark.django_db
-def test_grow_veggie_delete_view_post(grow_veggie, user2):
+def test_grow_veggie_delete_view_post_other_user(grow_veggie, user2):
     client = Client()
     client.force_login(user2)
     url = reverse('grow_veggie_delete', kwargs={'pk': grow_veggie.pk})
@@ -257,3 +257,39 @@ def test_grow_veggie_list_view_get_other_user_grow_veggies(user, grow_veggies):
     response = client.get(url)
     assert response.status_code == 200
     assert not list(response.context['grow_veggies']) == grow_veggies[1]
+
+
+@pytest.mark.django_db
+def test_test_plan_view_get(user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('plan')
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_test_plan_option1_view_get(user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('plan_option1')
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_test_plan_option2_view_get(user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('plan_option2')
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_test_plan_list_view_get(user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('plan_list')
+    response = client.get(url)
+    assert response.status_code == 200

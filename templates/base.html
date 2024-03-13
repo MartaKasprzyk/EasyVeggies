@@ -13,7 +13,7 @@
     </div>    
     <div class="topnav">    
       <a class="active" href="{% url "base" %}">HOME</a>
-      <a href="#news">PLAN</a>
+      <a href="{% url 'plan' %}">PLAN</a>
       <a href="{% url 'seed_add' %}">SEEDS</a>
       <a href="#about">GROW</a>
        {% if user.is_authenticated %}
