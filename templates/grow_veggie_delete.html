@@ -2,10 +2,18 @@
 {% block content %}
     <p> Are you sure you want to delete this record? </p>
     <ul><b>VEGGIE: </b>{{ grow_veggie.veggie }}</ul>
-    <ul><b>SUN: </b>{{ grow_veggie.sun }}</ul>
-    <ul><b>WATER: </b>{{ grow_veggie.water }}</ul>
-    <ul><b>SOIL: </b>{{ grow_veggie.soil }}</ul>
-    <ul><b>SOW: </b>{{ grow_veggie.sow }}</ul>
+    <ul><b>SUN: </b>{% for sun in grow_veggie.sun.all %}
+                        {{ sun }}, 
+                     {% endfor %}</ul>
+    <ul><b>WATER: </b>{% for water in grow_veggie.water.all %}
+                        {{ water }}, 
+                     {% endfor %}</ul>
+    <ul><b>SOIL: </b>{% for soil in grow_veggie.soil.all %}
+                        {{ soil }}, 
+                     {% endfor %}</ul>
+    <ul><b>SOW: </b>{% for month in grow_veggie.sow.all %}
+                        {{ month }}, 
+                     {% endfor %}</ul>
     <ul><b>COMMENT: </b>{{ grow_veggie.comment }}</ul>
     <br>
     <form method="post">
