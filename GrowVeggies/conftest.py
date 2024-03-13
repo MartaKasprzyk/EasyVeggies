@@ -56,7 +56,7 @@ def sun_scale():
 @pytest.fixture
 def water_scale():
     scale = []
-    for x in range(3):
+    for x in range(2):
         water = WaterScale.objects.create(name='name')
         scale.append(water)
     return scale
@@ -65,7 +65,7 @@ def water_scale():
 @pytest.fixture
 def soil_scale():
     scale = []
-    for x in range(3):
+    for x in range(2):
         soil = SoilScale.objects.create(name='name')
         scale.append(soil)
     return scale
@@ -74,13 +74,38 @@ def soil_scale():
 @pytest.fixture
 def month():
     months = []
-    for x in range(12):
-        month = Month.objects.create(name='name')
-        months.append(month)
+    month1 = Month.objects.create(name='name', order='1')
+    month2 = Month.objects.create(name='name', order='2')
+    months.append(month1)
+    months.append(month2)
     return months
 
 
 @pytest.fixture
 def grow_veggie(user, veggie, sun_scale, water_scale, soil_scale, month):
-    return GrowVeggie.objects.create(owner=user, veggie=veggie, sun_scale=sun_scale, water_scale=water_scale,
-                                     soil_scale=soil_scale, month=month, comment='comment')
+    grow_veggie = GrowVeggie.objects.create(owner=user, veggie=veggie, comment='comment')
+    grow_veggie.sun.set(sun_scale)
+    grow_veggie.water.set(water_scale)
+    grow_veggie.soil.set(soil_scale)
+    grow_veggie.sow.set(month)
+    return grow_veggie
+
+
+@pytest.fixture
+def grow_veggies(user, user2, veggie, sun_scale, water_scale, soil_scale, month):
+    grow_veggies_list1 = []
+    grow_veggies_list2 = []
+    for x in range(3):
+        grow_veggie_1 = GrowVeggie.objects.create(owner=user, veggie=veggie, comment='comment')
+        grow_veggie_1.sun.set(sun_scale)
+        grow_veggie_1.water.set(water_scale)
+        grow_veggie_1.soil.set(soil_scale)
+        grow_veggie_1.sow.set(month)
+        grow_veggies_list1.append(grow_veggie_1)
+        grow_veggie_2 = GrowVeggie.objects.create(owner=user2, veggie=veggie, comment='comment')
+        grow_veggie_2.sun.set(sun_scale)
+        grow_veggie_2.water.set(water_scale)
+        grow_veggie_2.soil.set(soil_scale)
+        grow_veggie_2.sow.set(month)
+        grow_veggies_list2.append(grow_veggie_2)
+    return grow_veggies_list1, grow_veggies_list2

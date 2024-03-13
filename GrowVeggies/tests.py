@@ -3,8 +3,8 @@ from django.test import Client
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
-from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm
-from GrowVeggies.models import Seed, Veggie, Company
+from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm, GrowVeggieCreateForm
+from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie
 
 
 def test_base_view_get():
@@ -164,3 +164,96 @@ def test_seeds_list_view_get_other_user_seeds(user, seeds):
     response = client.get(url)
     assert response.status_code == 200
     assert not list(response.context['seeds']) == seeds[1]
+
+
+@pytest.mark.django_db
+def test_grow_veggie_create_view_get(user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('grow_veggie_add')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert isinstance(response.context['form'], GrowVeggieCreateForm)
+
+
+@pytest.mark.django_db
+def test_grow_veggie_create_view_post(user, veggie, sun_scale, water_scale, soil_scale, month):
+    client = Client()
+    client.force_login(user)
+    url = reverse('grow_veggie_add')
+    data = {'veggie': veggie.pk,
+            'sun': [sun_scale[0].pk, soil_scale[1].pk],
+            'water': [water_scale[0].pk, water_scale[1].pk],
+            'soil': [soil_scale[0].pk, soil_scale[1].pk],
+            'sow': [month[0].pk, month[1].pk],
+            'comment': 'comment'}
+    response = client.post(url, data, follow=True)
+    assert response.status_code == 200
+    assert GrowVeggie.objects.get(owner=user, veggie=veggie,
+                                  sun=(sun_scale[0].pk, soil_scale[1].pk),
+                                  water=(water_scale[0].pk, water_scale[1].pk),
+                                  soil=(soil_scale[0].pk, soil_scale[1].pk),
+                                  sow=(month[0].pk, month[1].pk),
+                                  comment='comment')
+
+
+@pytest.mark.django_db
+def test_grow_veggie_update_view_get(user, grow_veggie_1, veggie, sun_scale, water_scale, soil_scale, month):
+    client = Client()
+    client.force_login(user)
+    url = reverse('grow_veggie_update', kwargs={'pk': grow_veggie_1.pk})
+    response = client.get(url, follow=True)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_grow_veggie_delete_view_get(grow_veggie):
+    client = Client()
+    client.force_login(grow_veggie.owner)
+    url = reverse('grow_veggie_delete', kwargs={'pk': grow_veggie.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['grow_veggie'] == grow_veggie
+
+
+@pytest.mark.django_db
+def test_grow_veggie_delete_view_post(grow_veggie):
+    client = Client()
+    client.force_login(grow_veggie.owner)
+    url = reverse('grow_veggie_delete', kwargs={'pk': grow_veggie.pk})
+    data = {'delete': 'YES'}
+    response = client.post(url, data, follow=True)
+    assert response.status_code == 200
+    with pytest.raises(ObjectDoesNotExist):
+        GrowVeggie.objects.get(pk=grow_veggie.pk)
+
+
+@pytest.mark.django_db
+def test_grow_veggie_delete_view_post(grow_veggie, user2):
+    client = Client()
+    client.force_login(user2)
+    url = reverse('grow_veggie_delete', kwargs={'pk': grow_veggie.pk})
+    data = {'delete': 'YES'}
+    response = client.post(url, data, follow=True)
+    assert response.status_code == 403
+    assert GrowVeggie.objects.get(pk=grow_veggie.pk)
+
+
+@pytest.mark.django_db
+def test_grow_veggie_list_view_get(user, grow_veggies):
+    client = Client()
+    client.force_login(user)
+    url = reverse('grow_veggies')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert list(response.context['grow_veggies']) == grow_veggies[0]
+
+
+@pytest.mark.django_db
+def test_grow_veggie_list_view_get_other_user_grow_veggies(user, grow_veggies):
+    client = Client()
+    client.force_login(user)
+    url = reverse('grow_veggies')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert not list(response.context['grow_veggies']) == grow_veggies[1]
