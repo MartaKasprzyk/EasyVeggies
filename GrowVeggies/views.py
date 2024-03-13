@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie
+from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, VeggieBed, VeggieFamily
 from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm, GrowVeggieCreateForm
 from GrowVeggies.forms import VeggieUpdateForm, CompanyUpdateForm, SeedUpdateForm, GrowVeggieUpdateForm
 
@@ -205,3 +205,25 @@ class GrowVeggieListView(LoginRequiredMixin, View):
         user = request.user
         grow_veggies = GrowVeggie.objects.filter(owner=user)
         return render(request, 'grow_veggies.html', {'grow_veggies': grow_veggies})
+
+
+class PlanView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'plan.html')
+
+
+class PlanCreateFirstView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'plan_option1.html')
+
+
+class PlanCreateBasedOnLastView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'plan_option2.html')
+
+
+class PlanListView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = request.user
+        plans = Plan.objects.filter(owner=user)
+        return render(request, 'plan_list.html', {'plans': plans})

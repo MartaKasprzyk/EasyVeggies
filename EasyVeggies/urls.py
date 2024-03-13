@@ -37,4 +37,8 @@ urlpatterns = [
     path('growveggie/update/<int:pk>/', views.GrowVeggieUpdateView.as_view(), name='grow_veggie_update'),
     path('growveggie/delete/<int:pk>/', views.GrowVeggieDeleteView.as_view(), name='grow_veggie_delete'),
     path('growveggies/', views.GrowVeggieListView.as_view(), name='grow_veggies'),
+    path('plan/', views.PlanView.as_view(), name='plan'),
+    path('plan/option1/', views.PlanCreateFirstView.as_view(), name='plan_option1'),
+    path('plan/option2/', views.PlanCreateBasedOnLastView.as_view(), name='plan_option2'),
+    path('plan/list/', views.PlanListView.as_view(), name='plan_list'),
     ]
