@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+    Growing conditions for all your veggies, finally in one place!
+    
+    <table>
+        <tr>
+            <th>lp</th>
+            <th>VEGGIE</th>
+            <th>SUN</th>
+            <th>WATER</th>
+            <th>SOIL</th>
+            <th>SOW</th>
+            <th>COMMENT</th>
+        </tr>
+             {% for grow_veggie in grow_veggies %}
+                 <tr>
+                 <td>{{ forloop.counter }}</td>
+                 <td>{{ grow_veggie.veggie }}</td>
+                 <td>{% for sun in grow_veggie.sun.all %}
+                        {{ sun }}, 
+                     {% endfor %}</td>
+                 <td>{% for water in grow_veggie.water.all %}
+                        {{ water }}, 
+                     {% endfor %}</td>
+                 <td>{% for soil in grow_veggie.soil.all %}
+                        {{ soil }}, 
+                     {% endfor %}</td>
+                 <td>{% for month in grow_veggie.sow.all %}
+                        {{ month }}, 
+                     {% endfor %}</td>
+                 <td>{{ grow_veggie.comment }}</td>
+            {% endfor %}
+    </table>  
+{% endblock %}
