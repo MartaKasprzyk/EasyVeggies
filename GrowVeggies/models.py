@@ -84,16 +84,16 @@ class Plan(models.Model):
 
 
 class Bed(models.Model):
-    name = models.CharField(max_length=50)
-    sun = models.ForeignKey(SunScale, on_delete=models.CASCADE)
-    water = models.ForeignKey(WaterScale, on_delete=models.CASCADE)
-    soil = models.ForeignKey(SoilScale, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50, default='bed name')
+    sun = models.ForeignKey(SunScale, on_delete=models.CASCADE, blank=True, null=True)
+    water = models.ForeignKey(WaterScale, on_delete=models.CASCADE, blank=True, null=True)
+    soil = models.ForeignKey(SoilScale, on_delete=models.CASCADE, blank=True, null=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class VeggieBed(models.Model):
     veggie = models.ForeignKey(Veggie, on_delete=models.CASCADE)
     bed = models.ForeignKey(Bed, on_delete=models.CASCADE)
-    progress = models.IntegerField(choices=PROGRESS)
+    progress = models.IntegerField(choices=PROGRESS, blank=True, null=True)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
 
