@@ -6,6 +6,8 @@ from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateFor
 from GrowVeggies.forms import VeggieUpdateForm, CompanyUpdateForm, SeedUpdateForm, GrowVeggieUpdateForm
 # from GrowVeggies.forms import PlanOption1CreateForm
 from GrowVeggies.models import PROGRESS
+from bs4 import BeautifulSoup
+
 
 class BaseView(View):
 
@@ -214,28 +216,65 @@ class PlanView(LoginRequiredMixin, View):
 
 
 class PlanCreateFirstView(LoginRequiredMixin, View):
+    def create_bed_objects(self, request):
+        user = request.user
+
+        user_beds = request.POST.getlist('bed_name')
+
+        bed_objs_pks = []
+        for user_bed in user_beds:
+            bed_obj = Bed.objects.create(owner=user, name=user_bed)
+            bed_objs_pks.append(bed_obj.pk)
+
+        return bed_objs_pks
+
+    def create_plan_object(self, request):
+        user = request.user
+
+        plan_name = request.POST.get('plan_name')
+        plan = Plan.objects.create(owner=user, name=plan_name)
+        plan_id = plan.pk
+
+        return plan_id
+
+    def create_grow_veggies_objects(self, request, amount, bed_objs_pks, plan_id):
+
+        veggie = request.POST.getlist('veggie')
+        bed = bed_objs_pks
+        progress = request.POST.getlist('progress')
+        plan = plan_id
+
+        vb_objs = []
+        for i in range(amount):
+            vb = VeggieBed.objects.create(veggie_id=veggie[i], bed_id=bed[i], progress=progress[i], plan_id=plan)
+            vb_objs.append(vb)
+
+        return vb_objs
+
+
     def get(self, request):
         return render(request, 'plan_option1.html')
 
     def post(self, request):
         beds_amount = int(request.POST.get('beds_amount'))
-        beds = []
-        for bed in range(beds_amount):
-            bed = 'name'
-            beds.append(bed)
+        beds = [bed for bed in range(beds_amount)]
 
-        veggies = Veggie.objects.all()
-        families = VeggieFamily.objects.all()
-        progress = PROGRESS
-        # if beds_amount > 0:
-        #     user = request.user
-        #     for bed in range(beds_amount):
-        #         Bed.objects.create(owner=user)
-        #
-        # beds = Bed.objects.all()
+        veggies = Veggie.objects.all().order_by('name')
+        families = VeggieFamily.objects.all().order_by('order')
+        progress = sorted(PROGRESS, key=lambda x: x[0])
+
+        plan = request.POST.get('save_plan')
+        if plan == "SAVE PLAN":
+            amount = int(request.POST.get('beds_amount'))
+
+            bed_objs_pks = self.create_bed_objects(request)
+            plan_id = self.create_plan_object(request)
+            self.create_grow_veggies_objects(request, amount, bed_objs_pks, plan_id)
+
+            return redirect('plan_list')
 
         return render(request, 'plan_option1.html', {'beds_amount': beds_amount, 'beds': beds,
-                                                     'veggies': veggies, 'families': families, 'progress':progress})
+                                                     'veggies': veggies, 'families': families, 'progress': progress})
 
 
 class PlanCreateBasedOnLastView(LoginRequiredMixin, View):

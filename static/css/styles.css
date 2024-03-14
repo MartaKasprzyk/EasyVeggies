@@ -70,3 +70,8 @@ section {
   padding: 10px 15px;
   text-align: center;
 }
+
+.plan_table {
+  width: 80%;
+  border-collapse: collapse;
+}
