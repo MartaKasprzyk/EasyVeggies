@@ -215,7 +215,7 @@ class PlanView(LoginRequiredMixin, View):
         return render(request, 'plan.html')
 
 
-class PlanCreateFirstView(LoginRequiredMixin, View):
+class PlanCreateOption1View(LoginRequiredMixin, View):
     def create_bed_objects(self, request):
         user = request.user
 
@@ -237,7 +237,7 @@ class PlanCreateFirstView(LoginRequiredMixin, View):
 
         return plan_id
 
-    def create_grow_veggies_objects(self, request, amount, bed_objs_pks, plan_id):
+    def create_veggie_bed_objects(self, request, amount, bed_objs_pks, plan_id):
 
         veggie = request.POST.getlist('veggie')
         bed = bed_objs_pks
@@ -269,7 +269,7 @@ class PlanCreateFirstView(LoginRequiredMixin, View):
 
             bed_objs_pks = self.create_bed_objects(request)
             plan_id = self.create_plan_object(request)
-            self.create_grow_veggies_objects(request, amount, bed_objs_pks, plan_id)
+            self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
 
             return redirect('plan_list')
 
@@ -277,7 +277,7 @@ class PlanCreateFirstView(LoginRequiredMixin, View):
                                                      'veggies': veggies, 'families': families, 'progress': progress})
 
 
-class PlanCreateBasedOnLastView(LoginRequiredMixin, View):
+class PlanCreateOption2View(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'plan_option2.html')
 
