@@ -4,9 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, VeggieBed, VeggieFamily
 from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm, GrowVeggieCreateForm
 from GrowVeggies.forms import VeggieUpdateForm, CompanyUpdateForm, SeedUpdateForm, GrowVeggieUpdateForm
-# from GrowVeggies.forms import PlanOption1CreateForm
 from GrowVeggies.models import PROGRESS
-from bs4 import BeautifulSoup
 
 
 class BaseView(View):
@@ -216,6 +214,7 @@ class PlanView(LoginRequiredMixin, View):
 
 
 class PlanCreateOption1View(LoginRequiredMixin, View):
+
     def create_bed_objects(self, request):
         user = request.user
 
@@ -251,7 +250,6 @@ class PlanCreateOption1View(LoginRequiredMixin, View):
 
         return vb_objs
 
-
     def get(self, request):
         return render(request, 'plan_option1.html')
 
@@ -281,9 +279,42 @@ class PlanCreateOption2View(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'plan_option2.html')
 
+    def post(self, request):
+        beds_amount = int(request.POST.get('beds_amount'))
+        beds = [bed for bed in range(beds_amount)]
+
+        veggies = Veggie.objects.all().order_by('name')
+        families = VeggieFamily.objects.all().order_by('order')
+        progress = sorted(PROGRESS, key=lambda x: x[0])
+
+        # plan = request.POST.get('save_plan')
+        # if plan == "SAVE PLAN":
+        #     amount = int(request.POST.get('beds_amount'))
+        #
+        #     bed_objs_pks = self.create_bed_objects(request)
+        #     plan_id = self.create_plan_object(request)
+        #     self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+        #
+        #     return redirect('plan_list')
+
+        return render(request, 'plan_option2.html', {'beds_amount': beds_amount, 'beds': beds,
+                                                     'veggies': veggies, 'families': families, 'progress': progress})
+
 
 class PlanListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         plans = Plan.objects.filter(owner=user)
         return render(request, 'plan_list.html', {'plans': plans})
+
+
+class ShowVeggiesView(LoginRequiredMixin, View):
+    def get(self, request):
+        family = request.GET.get('family', '')
+        families = VeggieFamily.objects.all().order_by("order")
+        veggies = Veggie.objects.all().order_by("name")
+        if family:
+            veggies = veggies.filter(family=family).order_by("name")
+
+        return render(request, "test.html", {'families': families, 'veggies': veggies})
+

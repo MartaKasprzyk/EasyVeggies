@@ -9,12 +9,10 @@
             <input type="number" id="beds_amount" name="beds_amount" placeholder="0">
         {% endif %}
         <input type="submit" id="btn_beds">
-
-   
-    
+        </form>
+        
     {% if beds_amount > 0 %}
         {% csrf_token %}
-{#        <input type="number" name="beds_amount_confirm" placeholder="confirm number of beds">#}
         <input type="text" placeholder="plan name max 50" name="plan_name">
         <input type="submit" value="SAVE PLAN" name="save_plan">
         <table class="plan_table">
@@ -29,16 +27,16 @@
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td><input type="text" name="bed_name" placeholder="name"></td>
-                <td><select name="family">
+                <td><select name="family" id="family" class="family">
                     <option value="" disabled selected style="display:none;">Choose...</option>
                     {% for family in families %}
                         <option value="{{ family.id }}">{{ family.name }}</option>      
                     {% endfor %}
                 </select></td>
-                <td><select name="veggie">
+                <td><select name="veggie" id="veggie" class="veggie">
                     <option value="" disabled selected style="display:none;">Choose...</option>
                     {% for veggie in veggies %}
-                        <option value="{{ veggie.id }}">{{ veggie.name }}</option>      
+                        <option family="{{ veggie.family.pk }}" value="{{ veggie.id }}">{{ veggie.name }}</option>
                     {% endfor %}
                     </select>
                 </td>
@@ -54,5 +52,22 @@
         </form>
     {% endif %}
     
+
+{% block script %}
+<script>
+  $(document).ready(function() {
+      $('tr').each(function() {
+
+          const family = $(this).find("#family");
+          const veggie = $(this).find("#veggie");
+          const options = veggie.find('option');
+
+          family.on('change', function(event) {
+          veggie.html(options.filter('[family="' + family.val() + '"]'));
+            }).trigger('change');
+      });
+});
+</script>
+{% endblock %}
 {% endblock %}
 
