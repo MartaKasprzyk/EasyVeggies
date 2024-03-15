@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+    Here are the details of your lan: {{ plan.name }}
+    <br><br>
+    <table class="plan_table">
+            <tr>
+                <th>lp</th>
+                <th>BED</th>
+                <th>VEGGIE FAMILY</th>
+                <th>VEGGIES</th>
+                <th>PROGRESS</th>
+            </tr>
+            {% for veggie_bed in veggie_beds %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ veggie_bed.bed.name }}</td>
+                <td>{{ veggie_bed.veggie.family }}</td>
+                <td>{{ veggie_bed.veggie }}</td>
+                <td>{{ veggie_bed.get_progress_display }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+{% endblock %}
