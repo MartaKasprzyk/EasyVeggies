@@ -213,8 +213,7 @@ class PlanView(LoginRequiredMixin, View):
         return render(request, 'plan.html')
 
 
-class PlanCreateOption1View(LoginRequiredMixin, View):
-
+class PlanCommonFunctionsMixin:
     def create_bed_objects(self, request):
         user = request.user
 
@@ -250,6 +249,9 @@ class PlanCreateOption1View(LoginRequiredMixin, View):
 
         return vb_objs
 
+
+class PlanCreateOption1View(PlanCommonFunctionsMixin, LoginRequiredMixin, View):
+
     def get(self, request):
         return render(request, 'plan_option1.html')
 
@@ -275,7 +277,7 @@ class PlanCreateOption1View(LoginRequiredMixin, View):
                                                      'veggies': veggies, 'families': families, 'progress': progress})
 
 
-class PlanCreateOption2View(LoginRequiredMixin, View):
+class PlanCreateOption2View(PlanCommonFunctionsMixin, LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'plan_option2.html')
 
@@ -287,15 +289,15 @@ class PlanCreateOption2View(LoginRequiredMixin, View):
         families = VeggieFamily.objects.all().order_by('order')
         progress = sorted(PROGRESS, key=lambda x: x[0])
 
-        # plan = request.POST.get('save_plan')
-        # if plan == "SAVE PLAN":
-        #     amount = int(request.POST.get('beds_amount'))
-        #
-        #     bed_objs_pks = self.create_bed_objects(request)
-        #     plan_id = self.create_plan_object(request)
-        #     self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
-        #
-        #     return redirect('plan_list')
+        plan = request.POST.get('save_plan')
+        if plan == "SAVE PLAN":
+            amount = int(request.POST.get('beds_amount'))
+
+            bed_objs_pks = self.create_bed_objects(request)
+            plan_id = self.create_plan_object(request)
+            self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+
+            return redirect('plan_list')
 
         return render(request, 'plan_option2.html', {'beds_amount': beds_amount, 'beds': beds,
                                                      'veggies': veggies, 'families': families, 'progress': progress})
