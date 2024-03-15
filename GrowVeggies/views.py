@@ -318,3 +318,10 @@ class ShowVeggiesView(LoginRequiredMixin, View):
 
         return render(request, "test.html", {'families': families, 'veggies': veggies})
 
+
+class PlanDetailsView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        plan = Plan.objects.get(pk=pk)
+        veggie_beds = VeggieBed.objects.filter(plan_id=pk)
+        return render(request, "plan_details.html", {'plan': plan, 'veggie_beds': veggie_beds})
+

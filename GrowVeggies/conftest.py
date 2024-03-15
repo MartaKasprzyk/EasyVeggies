@@ -1,7 +1,8 @@
 import pytest
 from django.contrib.auth.models import User
 
-from GrowVeggies.models import Veggie, Company, VeggieFamily, Seed, GrowVeggie, SunScale, WaterScale, SoilScale, Month
+from GrowVeggies.models import Veggie, Company, VeggieFamily, Seed, GrowVeggie
+from GrowVeggies.models import SunScale, WaterScale, SoilScale, Month, Bed, Plan, VeggieBed
 
 
 @pytest.fixture
@@ -109,3 +110,18 @@ def grow_veggies(user, user2, veggie, sun_scale, water_scale, soil_scale, month)
         grow_veggie_2.sow.set(month)
         grow_veggies_list2.append(grow_veggie_2)
     return grow_veggies_list1, grow_veggies_list2
+
+@pytest.fixture
+def bed(user, sun_scale, water_scale, soil_scale):
+    bed = Bed.objects.create(owner=user, name='name',
+                             sun=sun_scale[0].pk, water=water_scale[0].pk, soil=soil_scale[0].pk)
+    return bed
+@pytest.fixture
+def veggie_bed(user, bed, veggie):
+    veggie_bed = VeggieBed.objects.create(owner=user, bed=bed.pk, veggie=veggie.pk, progress=1)
+    return veggie_bed
+
+@pytest.fixture
+def plan(user):
+    plan = Plan.objects.create(owner=user, name='name')
+    return plan

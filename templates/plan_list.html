@@ -14,7 +14,7 @@
                  <tr>
                  <td>{{ forloop.counter }}</td>
                  <td>{{ plan.name }}</td>
-                 <td>details</td>
+                 <td><a href="{% url 'plan_details' pk=plan.pk %}">details</a></td>
                  <td>edit</td>
                  <td>delete</td>
             {% endfor %}
