@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-    Here are the details of your lan: {{ plan.name }}
+    Here are the details of your plan: {{ plan.name }}
+    <br><br>
+    <button><a href="{% url 'plan_update' pk=plan.pk %}">EDIT</a></button>
+    <button><a href="{% url 'plan_delete' pk=plan.pk %}">DELETE</a></button>
     <br><br>
     <table class="plan_table">
             <tr>

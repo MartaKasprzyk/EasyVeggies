@@ -44,5 +44,7 @@ urlpatterns = [
     path('plan/option2/choose/', views.PlanCreateOption2ChooseView.as_view(), name='plan_option2_choose'),
     path('plan/list/', views.PlanListView.as_view(), name='plan_list'),
     path('plan/details/<int:pk>/', views.PlanDetailsView.as_view(), name='plan_details'),
+    path('plan/update/<int:pk>/', views.PlanUpdateView.as_view(), name='plan_update'),
+    path('plan/delete/<int:pk>/', views.PlanDeleteView.as_view(), name='plan_delete'),
     path('veggies/show/', views.ShowVeggiesView.as_view(), name='show_veggies'),
     ]

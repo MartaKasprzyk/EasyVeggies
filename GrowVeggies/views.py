@@ -363,3 +363,27 @@ class PlanDetailsView(LoginRequiredMixin, View):
         plan = Plan.objects.get(pk=pk)
         veggie_beds = VeggieBed.objects.filter(plan_id=pk)
         return render(request, "plan_details.html", {'plan': plan, 'veggie_beds': veggie_beds})
+
+
+class PlanUpdateView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        plan = Plan.objects.get(pk=pk)
+        return render(request, "plan_update.html")
+
+
+class PlanDeleteView(UserPassesTestMixin, View):
+    def test_func(self):
+        user = self.request.user
+        plan = Plan.objects.get(pk=self.kwargs['pk'])
+        return plan.owner == user
+
+    def get(self, request, pk):
+        plan = Plan.objects.get(pk=pk)
+        return render(request, "plan_delete.html", {'plan': plan})
+
+    def post(self, request, pk):
+        delete = request.POST.get('delete')
+        if delete == 'YES':
+            plan = Plan.objects.get(pk=pk)
+            plan.delete()
+        return redirect('plan_list')
