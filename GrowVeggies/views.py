@@ -375,6 +375,7 @@ class PlanUpdateView(LoginRequiredMixin, View):
                                                     'families': families, 'veggies': veggies})
 
 
+
 class PlanDeleteView(UserPassesTestMixin, View):
     def test_func(self):
         user = self.request.user

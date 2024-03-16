@@ -425,14 +425,13 @@ def test_plan_option1_view_post(user, family, veggie):
             }
     response = client.post(url, data, follow=True)
     assert response.status_code == 200
-    Bed.objects.get(owner=user, name='bed name')
-    Plan.objects.get(owner=user, name='plan name')
-    # bed = Bed.objects.get(owner=user, name='bed name')
-    # plan = Plan.objects.get(owner=user, name='plan name')
-    # assert VeggieBed.objects.get(owner=user, veggie=veggie, bed=bed.pk, progress=1, plan=plan.pk)
-
-
-# come back to this test =  TypeError: int() argument must be a string, a bytes-like object or a real number, not 'NoneType'
+    data2 = {
+        'bed': Bed.objects.get(owner=user, name='bed name'),
+        'plan': Plan.objects.get(owner=user, name='plan name'),
+    }
+    assert data2
+    assert VeggieBed.objects.get(owner=user, veggie=veggie, bed=data2['bed'], progress=1, plan=data2['plan'])
+    # TypeError: int() argument must be a string, a bytes-like object or a real number, not 'NoneType'
 
 @pytest.mark.django_db
 def test_plan_details_view_get(plan):
@@ -521,3 +520,21 @@ def test_plan_delete_view_post_other_user(plan, user2):
     data = {'delete': 'YES'}
     response = client.post(url, data, follow=True)
     assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_plan_update_view_get(plan):
+    client = Client()
+    client.force_login(plan.owner)
+    url = reverse('plan_update', kwargs={'pk': plan.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['plan'] == plan
+
+
+@pytest.mark.django_db
+def test_plan_update_view_get_not_logged(plan):
+    client = Client()
+    url = reverse('plan_update', kwargs={'pk': plan.pk})
+    response = client.get(url)
+    assert response.status_code == 302
