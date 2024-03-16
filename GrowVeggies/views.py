@@ -368,7 +368,11 @@ class PlanDetailsView(LoginRequiredMixin, View):
 class PlanUpdateView(LoginRequiredMixin, View):
     def get(self, request, pk):
         plan = Plan.objects.get(pk=pk)
-        return render(request, "plan_update.html")
+        veggie_beds = VeggieBed.objects.filter(plan_id=plan)
+        families = VeggieFamily.objects.all().order_by('order')
+        veggies = Veggie.objects.all().order_by('name')
+        return render(request, "plan_update.html", {'plan': plan, 'veggie_beds': veggie_beds,
+                                                    'families': families, 'veggies': veggies})
 
 
 class PlanDeleteView(UserPassesTestMixin, View):
