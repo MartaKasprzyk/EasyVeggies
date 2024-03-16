@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form method="get">
+    <select name="family" id="family" class="family">
+        <option value="" disabled selected style="display:none;">Choose...</option>
+        {% for family in families %}
+            <option value="{{ family.id }}">{{ family.name }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="show veggies" name="show_veggies">
+    </form>
+<br><br>
+    Veggies:
+    {% for veggie in veggies %}
+        <li>{{ veggie.name }} - {{ veggie.family }}</li>
+    {% endfor %}
+{% endblock %}

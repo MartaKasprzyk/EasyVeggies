@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}    
+
+    <form method="post">
+        {% csrf_token %}
+        <input name="amount" type ="hidden" value="{{ amount }}">
+        <input type="text" value="{{ plan.name }}" name="plan_name">
+        <input type="submit" value="UPDATE PLAN" name="update_plan">
+        <table class="plan_table">
+            <tr>
+                <th>lp</th>
+                <th>BED</th>
+                <th>PREVIOUS VEGGIE FAMILY</th>
+                <th>VEGGIES</th>
+                <th>PROGRESS</th>
+            </tr>
+            {% for veggie_bed in veggie_beds %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><input type="text" value="{{ veggie_bed.bed.name }}"></td>
+                    <td><select name="family" id="family" class="family">
+                        {% for family in families %}
+                            <option value="{{ family.pk }}" 
+                                {% if family == veggie_bed.veggie.family %} selected 
+                                {% endif %}>{{ family.name }}</option>
+                        {% endfor %}    
+                    </select></td>
+                    <td><select name="veggie" id="veggie" class="veggie">
+                        {% for veggie in veggies %}
+                            <option family="{{ veggie.family.pk }}"
+                                    value="{{ veggie.pk }}"
+                            {% if veggie == veggie_bed.veggie %} selected
+                            {% endif %}>{{ veggie.name }}</option>
+                        {% endfor %}
+                    </select>
+                    </td>
+                    <td><select name="progress">
+                        {% for key, value in progress %}
+                            <option value="{{ key }}"
+                            {% if key == veggie_bed.progress %} selected
+                            {% endif %}>{{ value }}</option>
+                        {% endfor %}
+                    </select></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </form>
+
+
+{% block script %}
+    <script src="/static/js/script_plan_option1.js"></script>
+{% endblock %}
+{% endblock %}
+

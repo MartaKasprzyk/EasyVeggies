@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="shortcut icon" type="x-icon" href="/static/images/tomato.png">
     <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <title>Easy Veggies</title>
 </head>
 <body>
@@ -13,9 +14,9 @@
     </div>    
     <div class="topnav">    
       <a class="active" href="{% url "base" %}">HOME</a>
-      <a href="#news">PLAN</a>
-      <a href="{% url 'seed_add' %}">SEEDS</a>
-      <a href="#about">GROW</a>
+      <a href="{% url 'plan' %}">PLAN</a>
+      <a href="{% url 'seeds' %}">SEEDS</a>
+      <a href="{% url 'grow_veggies' %}">GROW</a>
        {% if user.is_authenticated %}
            <a href="{% url 'logout' %}">LOGOUT</a> </li>
        {% else %}
@@ -44,5 +45,6 @@
 
 {% block content %}
 {% endblock %}
+
 </body>
 </html>

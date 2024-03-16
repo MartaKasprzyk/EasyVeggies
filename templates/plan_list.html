@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+    View all plans for your veggie garden.
+    
+    <table>
+        <tr>
+            <th>lp</th>
+            <th>NAME</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+             {% for plan in plans %}
+                 <tr>
+                 <td>{{ forloop.counter }}</td>
+                 <td>{{ plan.name }}</td>
+                 <td><a href="{% url 'plan_details' pk=plan.pk %}">details</a></td>
+                 <td><a href="{% url 'plan_update' pk=plan.pk %}">edit</a></td>
+                 <td><a href="{% url 'plan_delete' pk=plan.pk %}">delete</a></td>
+            {% endfor %}
+    </table>  
+{% endblock %}

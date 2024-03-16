@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
     Growing conditions for all your veggies, finally in one place!
-    
+    <br><br>
+    <button><a href="{% url "grow_veggie_add" %}">ADD CONDITION</a></button>
     <table>
         <tr>
             <th>lp</th>
@@ -11,6 +12,8 @@
             <th>SOIL</th>
             <th>SOW</th>
             <th>COMMENT</th>
+            <th></th>
+            <th></th>
         </tr>
              {% for grow_veggie in grow_veggies %}
                  <tr>
@@ -29,6 +32,8 @@
                         {{ month }}, 
                      {% endfor %}</td>
                  <td>{{ grow_veggie.comment }}</td>
+                 <td><a href="{% url "grow_veggie_update" pk=grow_veggie.pk%}">edit</a></td>
+                 <td><a href="{% url "grow_veggie_delete" pk=grow_veggie.pk%}">delete</a></td>
             {% endfor %}
     </table>  
 {% endblock %}
