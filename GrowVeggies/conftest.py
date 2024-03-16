@@ -117,8 +117,8 @@ def bed(user, sun_scale, water_scale, soil_scale):
                              sun=sun_scale[0].pk, water=water_scale[0].pk, soil=soil_scale[0].pk)
     return bed
 @pytest.fixture
-def veggie_bed(user, bed, veggie):
-    veggie_bed = VeggieBed.objects.create(owner=user, bed=bed.pk, veggie=veggie.pk, progress=1)
+def veggie_bed(veggie, bed, plan):
+    veggie_bed = VeggieBed.objects.create(veggie=veggie.pk, bed=bed.pk, progress=1, plan=plan.pk)
     return veggie_bed
 
 @pytest.fixture
