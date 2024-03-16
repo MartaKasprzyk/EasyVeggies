@@ -315,21 +315,29 @@ class PlanCreateOption2UploadView(PlanCommonFunctionsMixin, LoginRequiredMixin, 
         plan = request.GET.get('prev_plan')
         plans = Plan.objects.all()
         veggie_beds = VeggieBed.objects.all()
+        amount = veggie_beds.count()
         families = VeggieFamily.objects.all().order_by('order')
         veggies = Veggie.objects.all().order_by('name')
         progress = sorted(PROGRESS, key=lambda x: x[0])
         if plan:
             veggie_beds = VeggieBed.objects.filter(plan=plan)
+            amount = veggie_beds.count()
 
         return render(request, 'plan_option2_upload.html', {'plans': plans,
                                                             'veggie_beds': veggie_beds, 'families': families,
-                                                            'veggies': veggies, 'progress': progress})
+                                                            'veggies': veggies, 'progress': progress,
+                                                            'amount': amount})
 
-    # def post(self, request):
-    #     plan_id = request.POST.get('prev_plan')
-    #     veggie_beds = VeggieBed.objects.filter(plan_id=plan_id)
-    #     return render(request, 'plan_option2_upload.html', {'veggie_beds': veggie_beds})
+    def post(self, request):
+        plan = request.POST.get('save_plan')
+        if plan == "SAVE PLAN":
+            amount = int(request.POST.get('amount'))
 
+            bed_objs_pks = self.create_bed_objects(request)
+            plan_id = self.create_plan_object(request)
+            self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+
+            return redirect('plan_list')
 
 
 class PlanListView(LoginRequiredMixin, View):

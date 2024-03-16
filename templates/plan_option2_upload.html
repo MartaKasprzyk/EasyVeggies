@@ -11,9 +11,9 @@
         <input type="submit" id="prev_plan">
     </form>
 
-
     <form method="post">
         {% csrf_token %}
+        <input name="amount" type ="hidden" value="{{ amount }}">
         <input type="text" placeholder="plan name max 50" name="plan_name">
         <input type="submit" value="SAVE PLAN" name="save_plan">
         <table class="plan_table">
