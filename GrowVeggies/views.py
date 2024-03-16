@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import CreateView
+
 from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, VeggieBed, VeggieFamily
 from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm, GrowVeggieCreateForm
 from GrowVeggies.forms import VeggieUpdateForm, CompanyUpdateForm, SeedUpdateForm, GrowVeggieUpdateForm
@@ -277,6 +279,11 @@ class PlanCreateOption1View(PlanCommonFunctionsMixin, LoginRequiredMixin, View):
                                                      'veggies': veggies, 'families': families, 'progress': progress})
 
 
+class PlanCreateOption2ChooseView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'plan_option2_choose.html')
+
+
 class PlanCreateOption2View(PlanCommonFunctionsMixin, LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'plan_option2.html')
@@ -303,6 +310,28 @@ class PlanCreateOption2View(PlanCommonFunctionsMixin, LoginRequiredMixin, View):
                                                      'veggies': veggies, 'families': families, 'progress': progress})
 
 
+class PlanCreateOption2UploadView(PlanCommonFunctionsMixin, LoginRequiredMixin, View):
+    def get(self, request):
+        plan = request.GET.get('prev_plan')
+        plans = Plan.objects.all()
+        veggie_beds = VeggieBed.objects.all()
+        families = VeggieFamily.objects.all().order_by('order')
+        veggies = Veggie.objects.all().order_by('name')
+        progress = sorted(PROGRESS, key=lambda x: x[0])
+        if plan:
+            veggie_beds = VeggieBed.objects.filter(plan=plan)
+
+        return render(request, 'plan_option2_upload.html', {'plans': plans,
+                                                            'veggie_beds': veggie_beds, 'families': families,
+                                                            'veggies': veggies, 'progress': progress})
+
+    # def post(self, request):
+    #     plan_id = request.POST.get('prev_plan')
+    #     veggie_beds = VeggieBed.objects.filter(plan_id=plan_id)
+    #     return render(request, 'plan_option2_upload.html', {'veggie_beds': veggie_beds})
+
+
+
 class PlanListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
@@ -326,4 +355,3 @@ class PlanDetailsView(LoginRequiredMixin, View):
         plan = Plan.objects.get(pk=pk)
         veggie_beds = VeggieBed.objects.filter(plan_id=pk)
         return render(request, "plan_details.html", {'plan': plan, 'veggie_beds': veggie_beds})
-
