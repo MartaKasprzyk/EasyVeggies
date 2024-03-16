@@ -54,20 +54,7 @@
     
 
 {% block script %}
-<script>
-  $(document).ready(function() {
-      $('tr').each(function() {
-
-          const family = $(this).find("#family");
-          const veggie = $(this).find("#veggie");
-          const options = veggie.find('option');
-
-          family.on('change', function(event) {
-          veggie.html(options.filter('[family="' + family.val() + '"]'));
-            }).trigger('change');
-      });
-});
-</script>
+<script src="/static/js/script_plan_option1.js"></script>
 {% endblock %}
 {% endblock %}
 
