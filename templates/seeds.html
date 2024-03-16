@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-    All your seeds:
-    
+    All your seeds, finally in one place:
+     <br><br>
+    Got the new seed? Add it to your collection! <button><a href="{% url "seed_add" %}">ADD SEED</a></button>
+     <br><br>
     <table>
         <tr>
             <th>lp</th>
@@ -9,6 +11,8 @@
             <th>VARIETY</th>
             <th>COMPANY</th>
             <th>COMMENT</th>
+            <th></th>
+            <th></th>
         </tr>
              {% for seed in seeds %}
                  <tr>
@@ -17,6 +21,8 @@
                  <td>{{ seed.variety }}</td>
                  <td>{{ seed.company }}</td>
                  <td>{{ seed.comment }}</td>
+                 <td><a href="{% url "seed_update" pk=seed.pk%}">edit</a></td>
+                 <td><a href="{% url "seed_delete" pk=seed.pk%}">delete</a></td>
             {% endfor %}
     </table>  
 {% endblock %}
