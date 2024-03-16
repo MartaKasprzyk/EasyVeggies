@@ -9,10 +9,10 @@ from GrowVeggies.forms import VeggieUpdateForm, CompanyUpdateForm, SeedUpdateFor
 from GrowVeggies.models import PROGRESS
 
 
-class BaseView(View):
+class HomeView(View):
 
     def get(self, request):
-        return render(request, 'base.html')
+        return render(request, 'home.html')
 
 
 class VeggieCreateView(LoginRequiredMixin, View):

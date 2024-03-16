@@ -2,18 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="x-icon" href="/static/images/tomato.png">
     <link rel="stylesheet" href="/static/css/styles.css">
+    <!------ Plan - Family/Veggie dependent dropdowns ---------->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!------ Carousel ---------->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+    <link rel="stylesheet"
+          href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"
+          integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
     <title>Easy Veggies</title>
 </head>
 <body>
 <div>
     <div class="logo">
-       <a href="{% url "base" %}"><img src="/static/images/logo_veggies.png"></a>
+        <a href="{% url "home" %}"><img src="/static/images/logo_veggies.png"></a>
     </div>    
-    <div class="topnav">    
-      <a class="active" href="{% url "base" %}">HOME</a>
+    <div class="topnav">
+        <a class="active" href="{% url "home" %}">HOME</a>
       <a href="{% url 'plan' %}">PLAN</a>
       <a href="{% url 'seeds' %}">SEEDS</a>
       <a href="{% url 'grow_veggies' %}">GROW</a>
