@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
-    All your seeds, finally in one place:
+    <div>
+    All your seeds, finally in one place!
      <br><br>
-    Got the new seed? Add it to your collection! <button><a href="{% url "seed_add" %}">ADD SEED</a></button>
+    Got the new seed? Add it to your collection! 
+    <button class="button">
+    <a class="style" href="{% url "seed_add" %}">ADD SEED</a>
+    </button>
      <br><br>
-    <table>
+    <table class="table table-light table-stripped table-hover">
         <tr>
-            <th>lp</th>
+            <th></th>
             <th>VEGGIE</th>
             <th>VARIETY</th>
             <th>COMPANY</th>
@@ -21,8 +25,13 @@
                  <td>{{ seed.variety }}</td>
                  <td>{{ seed.company }}</td>
                  <td>{{ seed.comment }}</td>
-                 <td><a href="{% url "seed_update" pk=seed.pk%}">edit</a></td>
-                 <td><a href="{% url "seed_delete" pk=seed.pk%}">delete</a></td>
+                 <td><button class="button">
+                     <a class="style" href="{% url "seed_update" pk=seed.pk%}">edit</a>
+                 </button></td>
+                 <td><button class="button">
+                     <a class="style" href="{% url "seed_delete" pk=seed.pk%}">delete</a>
+                 </button></td>
             {% endfor %}
     </table>  
+    </div>
 {% endblock %}

@@ -1,14 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}    
-
+    <div>
     <form method="post">
         {% csrf_token %}
         <input name="amount" type ="hidden" value="{{ amount }}">
         <input type="text" value="{{ plan.name }}" name="plan_name">
-        <input type="submit" value="UPDATE PLAN" name="update_plan">
+        <input type="submit" value="UPDATE PLAN" name="update_plan" class="button">
+        <br><br>
         <table class="plan_table">
             <tr>
-                <th>lp</th>
+                <th></th>
                 <th>BED</th>
                 <th>PREVIOUS VEGGIE FAMILY</th>
                 <th>VEGGIES</th>
@@ -45,7 +46,7 @@
             {% endfor %}
         </table>
     </form>
-
+    </div>
 
 {% block script %}
     <script src="/static/js/script_plan_option1.js"></script>

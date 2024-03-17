@@ -1,14 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
-    Add seed to your collection. 
-    <br><br>
-    The veggie you are looking for is on the list? <button><a href="{% url 'veggie_add' %}">Add veggie</a></button>
-    <br><br>
-    The company you are looking for is on the list? <button><a href="{% url 'company_add' %}">Add company</a></button> 
-    <br><br>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-    <input type="submit">
-    </form>
+    <div class="form-style">
+        Add seed to your collection. 
+        <br><br>
+        The veggie you are looking for is not on the list?
+        <br>
+        <button class="button">
+        <a class="style" href="{% url 'veggie_add' %}">Add veggie</a></button>
+        <br><br>
+        The company you are looking for is on the list? 
+        <br>
+        <button class="button">
+        <a class="style" href="{% url 'company_add' %}">Add company</a></button> 
+        <br><br>
+        <div>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+            <input type="submit" class="button">
+            </form>
+        </div>
+    </div>
 {% endblock %}

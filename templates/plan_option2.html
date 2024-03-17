@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
+    <div>
     Dear Gardener - How many raised beds do you have?
+    <br><br>
     <form method="post">
         {% csrf_token %}
         {% if beds_amount > 0 %}
@@ -8,18 +10,19 @@
         {% else %}
             <input type="number" id="beds_amount" name="beds_amount" placeholder="0">
         {% endif %}
-        <input type="submit" id="btn_beds">
+        <input type="submit" id="btn_beds" class="button">
 
-
+    <br><br>
         {% if beds_amount > 0 %}
             {% csrf_token %}
             <input type="text" placeholder="plan name max 50" name="plan_name">
-            <input type="submit" value="SAVE PLAN" name="save_plan">
-            <table class="plan_table">
+            <input type="submit" value="SAVE PLAN" name="save_plan" class="button">
+            <br><br>
+            <table class="table table-light table-stripped table-hover">
                 <tr>
-                    <th>lp</th>
+                    <th></th>
                     <th>PREVIOUS VEGGIE FAMILY</th>
-                    <th>lp</th>
+                    <th></th>
                     <th>BED</th>
                     <th>NEXT VEGGIE FAMILY</th>
                     <th>VEGGIES</th>
@@ -28,7 +31,7 @@
                 {% for bed in beds %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
-                        <td><select name="prev_family" id="prev_family" class="prev_family">
+                        <td><select name="prev_family" id="prev_family" class="select-styling">
                             <option value="" disabled selected style="display:none;">Choose...</option>
                             {% for family in families %}
                                 <option value="{{ family.id }}">{{ family.name }}</option>
@@ -36,13 +39,13 @@
                         </select></td>
                         <td>{{ forloop.counter }}</td>
                         <td><input type="text" name="bed_name" placeholder="name"></td>
-                        <td><select name="family" id="family" class="family">
+                        <td><select name="family" id="family" class="select-styling">
                             <option value="" disabled selected style="display:none;">Choose...</option>
                             {% for family in families %}
                                 <option family="{{ family.pk }}" value="{{ family.id }}">{{ family.name }}</option>
                             {% endfor %}
                         </select></td>
-                        <td><select name="veggie" id="veggie" class="veggie">
+                        <td><select name="veggie" id="veggie" class="select-styling">
                             <option value="" disabled selected style="display:none;">Choose...</option>
                             {% for veggie in veggies %}
                                 <option family="{{ veggie.family.pk }}"
@@ -50,7 +53,7 @@
                             {% endfor %}
                         </select>
                         </td>
-                        <td><select name="progress">
+                        <td><select name="progress" class="select-styling">
                             <option value="" disabled selected style="display:none;">Choose...</option>
                             {% for key, value in progress %}
                                 <option value="{{ key }}">{{ value }}</option>
@@ -61,7 +64,7 @@
             </table>
             </form>
         {% endif %}
-
+    </div>
 
     {% block script %}
         <script src="/static/js/script_plan_option2.js"></script>
