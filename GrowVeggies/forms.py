@@ -7,7 +7,7 @@ class VeggieCreateForm(forms.ModelForm):
         model = Veggie
         fields = "__all__"
         widgets = {
-            'family': forms.Select(),
+            'family': forms.Select(attrs={'class': 'select-styling'})
         }
 
 
@@ -16,7 +16,7 @@ class VeggieUpdateForm(forms.ModelForm):
         model = Veggie
         fields = "__all__"
         widgets = {
-            'family': forms.Select(),
+            'family': forms.Select(attrs={'class': 'select-styling'}),
         }
 
 
@@ -37,8 +37,8 @@ class SeedCreateForm(forms.ModelForm):
         model = Seed
         fields = ['veggie', 'variety', 'company', 'comment']
         widgets = {
-            'veggie': forms.Select(),
-            'company': forms.Select(),
+            'veggie': forms.Select(attrs={'class': 'select-styling'}),
+            'company': forms.Select(attrs={'class': 'select-styling'}),
         }
 
 
@@ -47,8 +47,8 @@ class SeedUpdateForm(forms.ModelForm):
         model = Seed
         fields = ['veggie', 'variety', 'company', 'comment']
         widgets = {
-            'veggie': forms.Select(),
-            'company': forms.Select(),
+            'veggie': forms.Select(attrs={'class': 'select-styling'}),
+            'company': forms.Select(attrs={'class': 'select-styling'}),
         }
 
 
@@ -57,7 +57,7 @@ class GrowVeggieCreateForm(forms.ModelForm):
         model = GrowVeggie
         fields = ['veggie', 'sun', 'water', 'soil', 'sow', 'comment']
         widgets = {
-            'veggie': forms.Select(),
+            'veggie': forms.Select(attrs={'class': 'select-styling'}),
             'sun': forms.CheckboxSelectMultiple(),
             'water': forms.CheckboxSelectMultiple(),
             'soil': forms.CheckboxSelectMultiple(),
@@ -70,7 +70,7 @@ class GrowVeggieUpdateForm(forms.ModelForm):
         model = GrowVeggie
         fields = ['veggie', 'sun', 'water', 'soil', 'sow', 'comment']
         widgets = {
-            'veggie': forms.Select(),
+            'veggie': forms.Select(attrs={'class': 'select-styling'}),
             'sun': forms.CheckboxSelectMultiple(),
             'water': forms.CheckboxSelectMultiple(),
             'soil': forms.CheckboxSelectMultiple(),

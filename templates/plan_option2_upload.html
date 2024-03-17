@@ -34,20 +34,20 @@
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td>{{ veggie_bed.bed.name }}</td>
-                    <td><select name="prev_family" id="prev_family" class="prev_family">
+                    <td><select name="prev_family" id="prev_family" class="select-styling">
                         <option value="{{ veggie_bed.veggie.family.pk }}" 
                                 {% if family == veggie_bed.veggie.family %} selected 
                                 {% endif %}>{{ veggie_bed.veggie.family }}</option>
                     </select></td>                
                     <td>{{ forloop.counter }}</td>                
                     <td><input type="text" name="bed_name" placeholder="name"></td>
-                    <td><select name="family" id="family" class="family">
+                    <td><select name="family" id="family" class="select-styling">
                         <option value="" disabled selected style="display:none;">Choose...</option>
                         {% for family in families %}
                             <option family="{{ family.pk }}" value="{{ family.id }}">{{ family.name }}</option>
                         {% endfor %}
                     </select></td>
-                    <td><select name="veggie" id="veggie" class="veggie">
+                    <td><select name="veggie" id="veggie" class="select-styling">
                         <option value="" disabled selected style="display:none;">Choose...</option>
                         {% for veggie in veggies %}
                             <option family="{{ veggie.family.pk }}"
@@ -55,7 +55,7 @@
                         {% endfor %}
                     </select>
                     </td>
-                    <td><select name="progress">
+                    <td><select name="progress" class="select-styling">
                         <option value="" disabled selected style="display:none;">Choose...</option>
                         {% for key, value in progress %}
                             <option value="{{ key }}">{{ value }}</option>

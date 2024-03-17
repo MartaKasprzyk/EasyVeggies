@@ -116,6 +116,20 @@ a.style:hover{
   color: #333;
 }
 
+.form-style{
+  background-color: #98DE5B; /* For browsers that do not support gradients */
+  background-image: linear-gradient(to top right, #98DE5B, #08E1AE);
+  color: #4b4b4b;
+  text-align: center;
+  border-radius: 15px;
+  padding: 25px;
+}
+
+.select-styling{
+  width:150px;
+}
+
+
 footer {
   background-color: #333;
   padding: 10px;
