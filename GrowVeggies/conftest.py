@@ -9,9 +9,11 @@ from GrowVeggies.models import SunScale, WaterScale, SoilScale, Month, Bed, Plan
 def user():
     return User.objects.create_user(username='test', password='testing')
 
+
 @pytest.fixture
 def user2():
     return User.objects.create_user(username='test2', password='testing2')
+
 
 @pytest.fixture
 def veggie(user, family):
@@ -111,15 +113,36 @@ def grow_veggies(user, user2, veggie, sun_scale, water_scale, soil_scale, month)
         grow_veggies_list2.append(grow_veggie_2)
     return grow_veggies_list1, grow_veggies_list2
 
+
 @pytest.fixture
-def bed(user, sun_scale, water_scale, soil_scale):
-    bed = Bed.objects.create(owner=user, name='name',
-                             sun=sun_scale[0].pk, water=water_scale[0].pk, soil=soil_scale[0].pk)
+def sun():
+    sun = SunScale.objects.create(name='name')
+    return sun
+
+
+@pytest.fixture
+def water():
+    water = WaterScale.objects.create(name='name')
+    return water
+
+
+@pytest.fixture
+def soil():
+    soil = SoilScale.objects.create(name='name')
+    return soil
+
+
+@pytest.fixture
+def bed(user, sun, water, soil):
+    bed = Bed.objects.create(owner=user, name='name', sun=sun, water=water, soil=soil)
     return bed
+
+
 @pytest.fixture
 def veggie_bed(veggie, bed, plan):
     veggie_bed = VeggieBed.objects.create(veggie=veggie.pk, bed=bed.pk, progress=1, plan=plan.pk)
     return veggie_bed
+
 
 @pytest.fixture
 def plan(user):

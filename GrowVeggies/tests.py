@@ -322,7 +322,6 @@ def test_grow_veggie_delete_view_post_other_user(grow_veggie, user2):
     assert response.status_code == 403
 
 
-
 @pytest.mark.django_db
 def test_grow_veggie_list_view_get(user, grow_veggies):
     client = Client()
@@ -397,6 +396,7 @@ def test_plan_option2_view_get_not_logged():
     response = client.get(url)
     assert response.status_code == 302
 
+
 @pytest.mark.django_db
 def test_plan_list_view_get(user):
     client = Client()
@@ -411,6 +411,7 @@ def test_plan_list_view_get_not_logged():
     url = reverse('plan_list')
     response = client.get(url)
     assert response.status_code == 302
+
 
 @pytest.mark.django_db
 def test_plan_option1_view_post(user, family, veggie):
@@ -432,6 +433,7 @@ def test_plan_option1_view_post(user, family, veggie):
     assert data2
     assert VeggieBed.objects.get(owner=user, veggie=veggie, bed=data2['bed'], progress=1, plan=data2['plan'])
     # TypeError: int() argument must be a string, a bytes-like object or a real number, not 'NoneType'
+
 
 @pytest.mark.django_db
 def test_plan_details_view_get(plan):
@@ -481,6 +483,7 @@ def test_plan_option2_upload__view_get_not_logged():
     url = reverse('plan_option2_upload_plan')
     response = client.get(url)
     assert response.status_code == 302
+
 
 @pytest.mark.django_db
 def test_plan_delete_view_get(plan):
@@ -538,3 +541,85 @@ def test_plan_update_view_get_not_logged(plan):
     url = reverse('plan_update', kwargs={'pk': plan.pk})
     response = client.get(url)
     assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_bed_details_view_get(user, bed):
+    client = Client()
+    client.force_login(user)
+    url = reverse('bed_details', kwargs={'pk': bed.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_bed_details_view_get_not_logged(bed):
+    client = Client()
+    url = reverse('bed_details', kwargs={'pk': bed.pk})
+    response = client.get(url)
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_bed_update_view_get(user, bed):
+    client = Client()
+    client.force_login(user)
+    url = reverse('bed_update', kwargs={'pk': bed.pk})
+    response = client.get(url, follow=True)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_bed_update_view_get_not_logged(bed):
+    client = Client()
+    url = reverse('bed_update', kwargs={'pk': bed.pk})
+    response = client.get(url)
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db()
+def test_bed_update_view_post(bed):
+    bed.name = 'other_name'
+    bed.save()
+    bed.refresh_from_db()
+    assert bed.name == 'other_name'
+
+@pytest.mark.django_db
+def test_bed_delete_view_get(bed):
+    client = Client()
+    client.force_login(bed.owner)
+    url = reverse('bed_delete', kwargs={'pk': bed.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['bed'] == bed
+
+
+@pytest.mark.django_db
+def test_bed_delete_view_get_not_logged(bed):
+    client = Client()
+    url = reverse('bed_delete', kwargs={'pk': bed.pk})
+    response = client.get(url)
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_bed_delete_view_post(bed):
+    client = Client()
+    client.force_login(bed.owner)
+    url = reverse('bed_delete', kwargs={'pk': bed.pk})
+    data = {'delete': 'YES'}
+    response = client.post(url, data, follow=True)
+    assert response.status_code == 200
+    with pytest.raises(ObjectDoesNotExist):
+        Bed.objects.get(pk=bed.pk)
+
+
+@pytest.mark.django_db
+def test_grow_veggie_delete_view_post_other_user(bed, user2):
+    client = Client()
+    client.force_login(user2)
+    url = reverse('bed_delete', kwargs={'pk': bed.pk})
+    data = {'delete': 'YES'}
+    response = client.post(url, data, follow=True)
+    assert response.status_code == 403
+
