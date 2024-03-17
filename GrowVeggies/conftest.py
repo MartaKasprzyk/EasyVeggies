@@ -21,6 +21,10 @@ def veggie(user, family):
 
 
 @pytest.fixture
+def veggie2(user, family):
+    return Veggie.objects.create(name='other_veggie', family=family)
+
+@pytest.fixture
 def family(user):
     return VeggieFamily.objects.create(name='Family', order='1')
 
