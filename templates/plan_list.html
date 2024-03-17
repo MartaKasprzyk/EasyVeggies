@@ -3,14 +3,15 @@
     <div>
         View all plans for your veggie garden.
         <br><br>
-        <table>
+        <table class="table table-light table-stripped table-hover">
             <tr>
-                <th>lp</th>
+                <th></th>
                 <th>NAME</th>
                 <th></th>
                 <th></th>
                 <th></th>
             </tr>
+        <tbody>
                  {% for plan in plans %}
                      <tr>
                      <td>{{ forloop.counter }}</td>
@@ -31,6 +32,7 @@
                          </button>
                      </td>
                 {% endfor %}
+        </tbody>
         </table>  
     </div>
 {% endblock %}
