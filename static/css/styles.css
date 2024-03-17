@@ -42,6 +42,12 @@ div.content-wrap {
   color: #333;
 }
 
+.content{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .log_and_register{
   display: flex;
   align-items: center;
@@ -55,7 +61,7 @@ div.content-wrap {
   text-align: center;
 }
 
-.btn{
+.button{
   background-color: #333;
   border: none;
   border-radius: 15px;
@@ -64,11 +70,11 @@ div.content-wrap {
   text-decoration: none;
   display: inline-block;
   align-items: center;
-  width: 100%;
+  width: 250px;
   color: white;
 }
 
-.btn:hover{
+.button:hover{
   background-color: #3b3b3b;
   color: #08E1AE;
 }
@@ -78,6 +84,7 @@ div.content-wrap {
   border-radius: 15px;
   padding: 10px 15px;
   text-align: center;
+  width: 250px;
 }
 
 .plan_table {
@@ -88,6 +95,15 @@ div.content-wrap {
 .description{
   text-align: center;
 }
+
+a.style{
+  color: #90c556;
+}
+
+a.style{
+  color: #90c556;
+}
+
 footer {
   background-color: #333;
   padding: 10px;
