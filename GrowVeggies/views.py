@@ -179,7 +179,7 @@ class GrowVeggieUpdateView(LoginRequiredMixin, View):
         form = GrowVeggieUpdateForm(request.POST, instance=grow_veggie)
         if form.is_valid():
             form.save()
-            return redirect('grow_veggie_add', grow_veggie.pk)
+            return redirect('grow_veggies')
         return render(request, 'form.html', {'form': form})
 
 

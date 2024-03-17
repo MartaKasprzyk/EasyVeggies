@@ -1,8 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
-    To plan veggie garden based on last plan, the information about veggie families growing in each bed 
-    in previous plan is neccessary. Choose whether you want to provide previously growing veggie families yourself
-    or do you want to upload veggie families from one of your plans.
-    <button value="UPLOAD PLAN" name="delete"><a href={% url "plan_option2_upload_plan" %}>UPLOAD PLAN</a></button>
-    <button value="INPUT MANUALLY" name="delete"><a href="{% url "plan_option2" %}">INPUT MANUALLY</a></button>
+    <div>
+    <p>To plan veggie garden based on last plan, the information about veggie families<br> 
+        growing in each bed in previous plan is neccessary.<br> 
+        Choose whether you want to provide previously growing veggie families yourself<br> 
+        or do you want to upload veggie families from one of your plans.</p>
+        <br>
+        <button class="button" value="UPLOAD PLAN">
+            <a class="style" href={% url "plan_option2_upload_plan" %}>UPLOAD PLAN</a>
+        </button>
+        <button class="button" value="INPUT MANUALLY">
+            <a class="style" href="{% url "plan_option2" %}">INPUT MANUALLY</a>
+        </button>
+    </div>
 {% endblock %}

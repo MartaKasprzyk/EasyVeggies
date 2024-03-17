@@ -61,7 +61,7 @@ div.content-wrap {
   text-align: center;
 }
 
-.button{
+.user{
   background-color: #333;
   border: none;
   border-radius: 15px;
@@ -74,9 +74,26 @@ div.content-wrap {
   color: white;
 }
 
-.button:hover{
-  background-color: #3b3b3b;
+.user:hover{
+  background-color: #333;
   color: #08E1AE;
+}
+
+.button{
+  background-color: #333;
+  border: none;
+  border-radius: 15px;
+  padding: 6px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  align-items: center;
+  color: white;
+}
+
+.button:hover{
+  background-color: #98DE5B;
+  color: #333;
 }
 
 .input{
@@ -100,8 +117,8 @@ a.style{
   color: #90c556;
 }
 
-a.style{
-  color: #90c556;
+a.style:hover{
+  color: #333;
 }
 
 footer {

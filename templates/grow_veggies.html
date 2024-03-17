@@ -1,39 +1,47 @@
 {% extends 'base.html' %}
 {% block content %}
-    Growing conditions for all your veggies, finally in one place!
-    <br><br>
-    <button><a href="{% url "grow_veggie_add" %}">ADD CONDITION</a></button>
-    <table>
-        <tr>
-            <th>lp</th>
-            <th>VEGGIE</th>
-            <th>SUN</th>
-            <th>WATER</th>
-            <th>SOIL</th>
-            <th>SOW</th>
-            <th>COMMENT</th>
-            <th></th>
-            <th></th>
-        </tr>
-             {% for grow_veggie in grow_veggies %}
-                 <tr>
-                 <td>{{ forloop.counter }}</td>
-                 <td>{{ grow_veggie.veggie }}</td>
-                 <td>{% for sun in grow_veggie.sun.all %}
-                        {{ sun }}, 
-                     {% endfor %}</td>
-                 <td>{% for water in grow_veggie.water.all %}
-                        {{ water }}, 
-                     {% endfor %}</td>
-                 <td>{% for soil in grow_veggie.soil.all %}
-                        {{ soil }}, 
-                     {% endfor %}</td>
-                 <td>{% for month in grow_veggie.sow.all %}
-                        {{ month }}, 
-                     {% endfor %}</td>
-                 <td>{{ grow_veggie.comment }}</td>
-                 <td><a href="{% url "grow_veggie_update" pk=grow_veggie.pk%}">edit</a></td>
-                 <td><a href="{% url "grow_veggie_delete" pk=grow_veggie.pk%}">delete</a></td>
-            {% endfor %}
-    </table>  
+    <div>
+        Growing conditions for all your veggies, finally in one place!
+        <br><br>
+        Growing condition for your veggie is not in the table? 
+        <button class="button"><a class="style" href="{% url "grow_veggie_add" %}">ADD CONDITION</a></button>
+        <br><br>
+        <table>
+            <tr>
+                <th>lp</th>
+                <th>VEGGIE</th>
+                <th>SUN</th>
+                <th>WATER</th>
+                <th>SOIL</th>
+                <th>SOW</th>
+                <th>COMMENT</th>
+                <th></th>
+                <th></th>
+            </tr>
+                 {% for grow_veggie in grow_veggies %}
+                     <tr>
+                     <td>{{ forloop.counter }}</td>
+                     <td>{{ grow_veggie.veggie }}</td>
+                     <td>{% for sun in grow_veggie.sun.all %}
+                            {{ sun }}, 
+                         {% endfor %}</td>
+                     <td>{% for water in grow_veggie.water.all %}
+                            {{ water }}, 
+                         {% endfor %}</td>
+                     <td>{% for soil in grow_veggie.soil.all %}
+                            {{ soil }}, 
+                         {% endfor %}</td>
+                     <td>{% for month in grow_veggie.sow.all %}
+                            {{ month }}, 
+                         {% endfor %}</td>
+                     <td>{{ grow_veggie.comment }}</td>
+                     <td><button class="button">
+                         <a class="style" href="{% url "grow_veggie_update" pk=grow_veggie.pk%}">edit</a>
+                     </button></td>
+                     <td><button class="button">
+                         <a class="style" href="{% url "grow_veggie_delete" pk=grow_veggie.pk%}">delete</a>
+                     </button></td>
+                {% endfor %}
+        </table>  
+    </div>
 {% endblock %}

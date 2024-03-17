@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
+    <div>
     Choose previous plan
+    <br><br>
     <form method="get">
         <select name="prev_plan">
             <option value="" disabled selected style="display:none;">Choose...</option>
@@ -8,14 +10,15 @@
                 <option value="{{ plan.id }}">{{ plan.name }}</option>
             {% endfor %}
         </select>
-        <input type="submit" id="prev_plan">
+        <input type="submit" id="prev_plan" class="button">
     </form>
 
     <form method="post">
         {% csrf_token %}
         <input name="amount" type ="hidden" value="{{ amount }}">
         <input type="text" placeholder="plan name max 50" name="plan_name">
-        <input type="submit" value="SAVE PLAN" name="save_plan">
+        <input type="submit" value="SAVE PLAN" name="save_plan" class="button">
+        <br><br>
         <table class="plan_table">
             <tr>
                 <th>lp</th>
@@ -62,7 +65,7 @@
             {% endfor %}
         </table>
     </form>
-
+    </div>
 
 {% block script %}
     <script src="/static/js/script_plan_option2.js"></script>
