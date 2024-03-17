@@ -373,8 +373,9 @@ class PlanUpdateView(LoginRequiredMixin, View):
         veggie_beds = VeggieBed.objects.filter(plan_id=plan)
         families = VeggieFamily.objects.all().order_by('order')
         veggies = Veggie.objects.all().order_by('name')
+        progress = sorted(PROGRESS, key=lambda x: x[0])
         return render(request, "plan_update.html", {'plan': plan, 'veggie_beds': veggie_beds,
-                                                    'families': families, 'veggies': veggies})
+                                                    'families': families, 'veggies': veggies, 'progress': progress})
 
 
 

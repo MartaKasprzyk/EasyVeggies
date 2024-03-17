@@ -19,14 +19,14 @@
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td><input type="text" value="{{ veggie_bed.bed.name }}"></td>
-                    <td><select name="family" id="family" class="family">
+                    <td><select name="family" id="family" class="select-styling">
                         {% for family in families %}
                             <option value="{{ family.pk }}" 
                                 {% if family == veggie_bed.veggie.family %} selected 
                                 {% endif %}>{{ family.name }}</option>
                         {% endfor %}    
                     </select></td>
-                    <td><select name="veggie" id="veggie" class="veggie">
+                    <td><select name="veggie" id="veggie" class="select-styling">
                         {% for veggie in veggies %}
                             <option family="{{ veggie.family.pk }}"
                                     value="{{ veggie.pk }}"
@@ -35,13 +35,13 @@
                         {% endfor %}
                     </select>
                     </td>
-                    <td><select name="progress">
+                    <td><select name="progress" class="select-styling">
                         {% for key, value in progress %}
                             <option value="{{ key }}"
                             {% if key == veggie_bed.progress %} selected
-                            {% endif %}>{{ value }}</option>
+                            {% endif %}>{{ value }}</option>      
                         {% endfor %}
-                    </select></td>
+                    </select></td>  
                 </tr>
             {% endfor %}
         </table>
