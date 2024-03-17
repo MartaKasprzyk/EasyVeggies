@@ -41,6 +41,11 @@ class SeedCreateForm(forms.ModelForm):
             'company': forms.Select(attrs={'class': 'select-styling'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['veggie'].queryset = self.fields['veggie'].queryset.order_by('name')
+        self.fields['company'].queryset = self.fields['company'].queryset.order_by('name')
+
 
 class SeedUpdateForm(forms.ModelForm):
     class Meta:
@@ -64,6 +69,14 @@ class GrowVeggieCreateForm(forms.ModelForm):
             'sow': forms.CheckboxSelectMultiple(),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['veggie'].queryset = self.fields['veggie'].queryset.order_by('name')
+        self.fields['sun'].queryset = self.fields['sun'].queryset.order_by('pk')
+        self.fields['water'].queryset = self.fields['water'].queryset.order_by('pk')
+        self.fields['soil'].queryset = self.fields['soil'].queryset.order_by('-pk')
+        self.fields['sow'].queryset = self.fields['sow'].queryset.order_by('order')
+
 
 class GrowVeggieUpdateForm(forms.ModelForm):
     class Meta:
@@ -76,3 +89,11 @@ class GrowVeggieUpdateForm(forms.ModelForm):
             'soil': forms.CheckboxSelectMultiple(),
             'sow': forms.CheckboxSelectMultiple(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['veggie'].queryset = self.fields['veggie'].queryset.order_by('name')
+        self.fields['sun'].queryset = self.fields['sun'].queryset.order_by('pk')
+        self.fields['water'].queryset = self.fields['water'].queryset.order_by('pk')
+        self.fields['soil'].queryset = self.fields['soil'].queryset.order_by('-pk')
+        self.fields['sow'].queryset = self.fields['sow'].queryset.order_by('order')
