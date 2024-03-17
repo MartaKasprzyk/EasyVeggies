@@ -15,10 +15,19 @@
     <title>Easy Veggies</title>
 </head>
 <body>
-<div>
-    <div class="logo">
-        <a href="{% url "home" %}"><img src="/static/images/logo_veggies.png"></a>
-    </div>    
+<div class="page-container">
+    <div class="content-wrap">
+
+        <div class="header">
+            <div><a href="{% url "home" %}"><img src="/static/images/logo_veggies.png"></a></div>
+            <div class="user_logged">
+                {% if user.is_authenticated %}
+                    Welcome {{ user.username }}!
+                    <br>
+                    Happy gardening!
+                {% endif %}
+            </div>
+        </div>
     <div class="topnav">
         <a class="active" href="{% url "home" %}">HOME</a>
       <a href="{% url 'plan' %}">PLAN</a>
@@ -30,15 +39,8 @@
            <a href="{% url 'login' %}">LOGIN</a> </li>
        {% endif %}
     </div>
-</div>
 
-<br>
-<div>
-    {% if user.is_authenticated %}
-        Welcome {{ user.username }}! 
-    {% endif %}
-</div>
-<div>
+        <div>
     {% if messages %}
         <ul class="messagelist">
             {% for message in messages %}
@@ -46,12 +48,15 @@
             {% endfor %}
         </ul>
     {% endif %}
-</div>
-
-<div>Hello world</div>
-
+</div><br><br>
 {% block content %}
 {% endblock %}
+
+    </div>
+</div>
+<footer>* * * 2024 made by MEK * * *<br>
+    CodersLab Final Project
+</footer>
 
 </body>
 </html>

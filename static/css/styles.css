@@ -1,3 +1,12 @@
+div.page-container {
+  position: relative;
+  min-height: 100vh;
+}
+
+div.content-wrap {
+  padding-bottom: 2.5rem;
+}
+
 .topnav {
   background-color: #333;
   overflow: hidden;
@@ -21,16 +30,16 @@
   color: #98DE5B;
 }
 
-.logo{
+.header{
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 }
 
-section {
-  width: 100%;
-  display: flex;
-  justify-content: center;
+.user_logged{
+  padding: 25px;
+  color: #333;
 }
 
 .log_and_register{
@@ -74,5 +83,15 @@ section {
 .plan_table {
   width: 80%;
   border-collapse: collapse;
+}
+
+.description{
+  text-align: center;
+}
+footer {
+  background-color: #333;
+  padding: 10px;
+  text-align: center;
+  color: white;
 }
 
