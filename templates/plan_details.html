@@ -6,9 +6,9 @@
         <button class="button"><a class="style" href="{% url 'plan_update' pk=plan.pk %}">EDIT</a></button>
         <button class="button"><a class="style" href="{% url 'plan_delete' pk=plan.pk %}">DELETE</a></button>
         <br><br>
-        <table class="plan_table">
+        <table class="table table-light table-stripped table-hover">
                 <tr>
-                    <th>lp</th>
+                    <th></th>
                     <th>BED</th>
                     <th>VEGGIE FAMILY</th>
                     <th>VEGGIES</th>
@@ -17,7 +17,7 @@
                 {% for veggie_bed in veggie_beds %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ veggie_bed.bed.name }}</td>
+                    <td><a class="style" href="{% url 'bed_details' pk=veggie_bed.bed_id %}">{{ veggie_bed.bed.name }}</a></td>
                     <td>{{ veggie_bed.veggie.family }}</td>
                     <td>{{ veggie_bed.veggie }}</td>
                     <td>{{ veggie_bed.get_progress_display }}</td>

@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import CreateView
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 
 from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, VeggieBed, VeggieFamily
+from GrowVeggies.models import SunScale, WaterScale, SoilScale
 from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm, GrowVeggieCreateForm
 from GrowVeggies.forms import VeggieUpdateForm, CompanyUpdateForm, SeedUpdateForm, GrowVeggieUpdateForm
+from GrowVeggies.forms import BedUpdateForm
 from GrowVeggies.models import PROGRESS
 
 
@@ -391,4 +393,45 @@ class PlanDeleteView(UserPassesTestMixin, View):
         if delete == 'YES':
             plan = Plan.objects.get(pk=pk)
             plan.delete()
+        return redirect('plan_list')
+
+
+class BedDetailsView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        bed = Bed.objects.get(pk=pk)
+        return render(request, "bed_details.html", {'bed': bed})
+
+
+class BedUpdateView(LoginRequiredMixin, View):
+
+    def get(self, request, pk):
+        bed = Bed.objects.get(pk=pk)
+        form = BedUpdateForm(instance=bed)
+        return render(request, 'form.html', {'form': form, 'bed': bed})
+
+    def post(self, request, pk):
+        bed = Bed.objects.get(pk=pk)
+        form = BedUpdateForm(request.POST, instance=bed)
+        if form.is_valid():
+            form.save()
+            return redirect('bed_details', bed.pk)
+        return render(request, 'form.html', {'form': form, 'bed': bed})
+
+
+class BedDeleteView(UserPassesTestMixin, View):
+
+    def test_func(self):
+        user = self.request.user
+        bed = Bed.objects.get(pk=self.kwargs['pk'])
+        return bed.owner == user
+
+    def get(self, request, pk):
+        bed = Bed.objects.get(pk=pk)
+        return render(request, 'bed_delete.html', {"bed": bed})
+
+    def post(self, request, pk):
+        delete = request.POST.get('delete')
+        if delete == 'YES':
+            bed = Bed.objects.get(pk=pk)
+            bed.delete()
         return redirect('plan_list')

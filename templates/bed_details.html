@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div>
+        View details of bed: {{ bed.name }}
+        <br><br>
+        <button class="button"><a class="style" href="{% url 'bed_update' pk=bed.pk %}">EDIT</a></button>
+        <button class="button"><a class="style" href="{% url 'bed_delete' pk=bed.pk %}">DELETE</a></button>
+        <br><br>
+        <ul><b>NAME: </b>{{ bed.name }}</ul>
+        <ul><b>SUN: </b>{{ bed.sun }}</ul>
+        <ul><b>WATER: </b>{{ bed.water }}</ul>
+        <ul><b>SOIL: </b>{{ bed.soil }}</ul>
+        <br><br>
+{#        <button class="button">#}
+{#            <a class="style" href="{% url 'plan_details' pk=bed. ?plan.pk? %}">Go back to plan</a>#}
+{#        </button>#}
+    </div>
+{% endblock %}
