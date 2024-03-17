@@ -26,7 +26,7 @@ class RegisterUserView(View):
             user.save()
 
             messages.info(request, "User registered successfully.")
-            return redirect("base")
+            return redirect("home")
 
         except IntegrityError:
             return render(request, 'registration.html', {'error': 'This username is already taken. '
@@ -38,7 +38,7 @@ class LoginView(View):
         return render(request, 'login.html')
 
     def post(self, request):
-        url = request.GET.get('next', 'base')
+        url = request.GET.get('next', 'home')
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
@@ -52,4 +52,4 @@ class LogoutView(View):
 
     def get(self, request):
         logout(request)
-        return redirect('base')
+        return redirect('home')

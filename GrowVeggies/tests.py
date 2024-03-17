@@ -8,7 +8,7 @@ from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Bed, VeggieBed
 
 
 def test_base_view_get():
-    url = reverse('base')
+    url = reverse('home')
     client = Client()
     response = client.get(url)
     assert response.status_code == 200
@@ -18,7 +18,7 @@ def test_base_view_get():
 def test_test_base_view_get_logged_user(user):
     client = Client()
     client.force_login(user)
-    url = reverse('base')
+    url = reverse('home')
     response = client.get(url)
     assert response.status_code == 200
 

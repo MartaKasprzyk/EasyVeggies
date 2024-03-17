@@ -1,3 +1,12 @@
+div.page-container {
+  position: relative;
+  min-height: 100vh;
+}
+
+div.content-wrap {
+  padding-bottom: 2.5rem;
+}
+
 .topnav {
   background-color: #333;
   overflow: hidden;
@@ -21,15 +30,21 @@
   color: #98DE5B;
 }
 
-.logo{
+.header{
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 }
 
-section {
-  width: 100%;
+.user_logged{
+  padding: 25px;
+  color: #333;
+}
+
+.content{
   display: flex;
+  align-items: center;
   justify-content: center;
 }
 
@@ -46,7 +61,7 @@ section {
   text-align: center;
 }
 
-.btn{
+.button{
   background-color: #333;
   border: none;
   border-radius: 15px;
@@ -55,11 +70,11 @@ section {
   text-decoration: none;
   display: inline-block;
   align-items: center;
-  width: 100%;
+  width: 250px;
   color: white;
 }
 
-.btn:hover{
+.button:hover{
   background-color: #3b3b3b;
   color: #08E1AE;
 }
@@ -69,9 +84,30 @@ section {
   border-radius: 15px;
   padding: 10px 15px;
   text-align: center;
+  width: 250px;
 }
 
 .plan_table {
   width: 80%;
   border-collapse: collapse;
 }
+
+.description{
+  text-align: center;
+}
+
+a.style{
+  color: #90c556;
+}
+
+a.style{
+  color: #90c556;
+}
+
+footer {
+  background-color: #333;
+  padding: 10px;
+  text-align: center;
+  color: white;
+}
+
