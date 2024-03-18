@@ -368,7 +368,7 @@ class PlanCreateOption2UploadView(PlanCommonFunctionsMixin, LoginRequiredMixin, 
 class PlanListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
-        plan_list = Plan.objects.filter(owner=user)
+        plan_list = Plan.objects.filter(owner=user).order_by('name')
         plans_per_page = 5
 
         paginator = Paginator(plan_list, plans_per_page)

@@ -22,7 +22,7 @@
             </tr>
                  {% for grow_veggie in grow_veggies %}
                      <tr>
-                     <td>{{ forloop.counter|add:start_index }}</td>
+                     <td>{{ forloop.counter0|add:start_index }}</td>
                      <td>{{ grow_veggie.veggie }}</td>
                      <td>{% for sun in grow_veggie.sun.all %}
                             {{ sun }}, 
