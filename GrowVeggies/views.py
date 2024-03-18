@@ -176,7 +176,7 @@ class GrowVeggieCreateView(LoginRequiredMixin, View):
             grow_veggie.water.set(water)
             grow_veggie.soil.set(soil)
             grow_veggie.sow.set(sow)
-            return redirect('grow_veggie_add')
+            return redirect('grow_veggies')
         return render(request, 'grow_veggie_add.html', {'form': form})
 
 
@@ -368,10 +368,19 @@ class PlanCreateOption2UploadView(PlanCommonFunctionsMixin, LoginRequiredMixin, 
 class PlanListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
-        plans = Plan.objects.filter(owner=user)
-        number_of_plans = plans.count()
+        plan_list = Plan.objects.filter(owner=user)
+        plans_per_page = 5
+
+        paginator = Paginator(plan_list, plans_per_page)
+        page = request.GET.get('page')
+        plans = paginator.get_page(page)
+
+        start_index = (plans.number - 1) * plans_per_page + 1
+
+        number_of_plans = plan_list.count()
+
         return render(request, 'plan_list.html', {'plans': plans,
-                                                  'number_of_plans': number_of_plans})
+                                                  'number_of_plans': number_of_plans, 'start_index': start_index})
 
 
 class ShowVeggiesView(LoginRequiredMixin, View):
