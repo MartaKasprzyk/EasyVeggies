@@ -144,7 +144,7 @@ def bed(user, sun, water, soil):
 
 @pytest.fixture
 def veggie_bed(veggie, bed, plan):
-    veggie_bed = VeggieBed.objects.create(veggie=veggie.pk, bed=bed.pk, progress=1, plan=plan.pk)
+    veggie_bed = VeggieBed.objects.create(veggie=veggie, bed=bed, progress=1, plan=plan)
     return veggie_bed
 
 
@@ -152,3 +152,5 @@ def veggie_bed(veggie, bed, plan):
 def plan(user):
     plan = Plan.objects.create(owner=user, name='name')
     return plan
+
+

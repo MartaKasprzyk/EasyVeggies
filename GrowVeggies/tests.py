@@ -608,6 +608,40 @@ def test_plan_update_view_get_not_logged(plan):
     assert response.status_code == 302
 
 
+@pytest.mark.django_db()
+def test_plan_update_view_post(user, veggie2, plan, veggie_bed, bed, veggie):
+    client = Client()
+    client.force_login(user)
+    url = reverse('plan_update', kwargs={'pk': plan.pk})
+    data = {'plan_name': 'plan_name',
+            'bed_name': 'bed_name',
+            'veggie': veggie2.pk,
+            'progress': 3,
+            'update_plan': "UPDATE PLAN",
+            'plan_veggie_beds': veggie_bed.pk,
+            }
+    response = client.post(url, data, follow=True)
+
+    plan.name = 'plan_name'
+    plan.save()
+    plan.refresh_from_db()
+
+    veggie_bed.bed.name = "bed_name"
+    veggie_bed.veggie_id = veggie2.pk
+    veggie_bed.progress = 3
+
+    veggie_bed.bed.save()
+    veggie_bed.veggie.save()
+    veggie_bed.save()
+
+    plan.refresh_from_db()
+    veggie_bed.refresh_from_db()
+    assert plan.name == 'plan_name'
+    assert veggie_bed.bed.name == 'bed_name'
+    assert veggie_bed.veggie == veggie2
+    assert veggie_bed.progress == 3
+
+
 @pytest.mark.django_db
 def test_bed_details_view_get(user, bed):
     client = Client()
