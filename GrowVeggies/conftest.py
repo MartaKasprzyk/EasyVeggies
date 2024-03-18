@@ -55,8 +55,8 @@ def seeds(user, user2, veggie, company):
 def sun_scale():
     scale = []
     for x in range(3):
-        sun = SunScale.objects.create(name='name')
-        scale.append(sun)
+        the_sun = SunScale.objects.create(name='name')
+        scale.append(the_sun)
     return scale
 
 
@@ -64,8 +64,8 @@ def sun_scale():
 def water_scale():
     scale = []
     for x in range(2):
-        water = WaterScale.objects.create(name='name')
-        scale.append(water)
+        the_water = WaterScale.objects.create(name='name')
+        scale.append(the_water)
     return scale
 
 
@@ -73,8 +73,8 @@ def water_scale():
 def soil_scale():
     scale = []
     for x in range(2):
-        soil = SoilScale.objects.create(name='name')
-        scale.append(soil)
+        the_soil = SoilScale.objects.create(name='name')
+        scale.append(the_soil)
     return scale
 
 
@@ -134,6 +134,24 @@ def water():
 def soil():
     soil = SoilScale.objects.create(name='name')
     return soil
+
+
+@pytest.fixture
+def sun2():
+    sun2 = SunScale.objects.create(name='other_name')
+    return sun2
+
+
+@pytest.fixture
+def water2():
+    water2 = WaterScale.objects.create(name='other_name')
+    return water2
+
+
+@pytest.fixture
+def soil2():
+    soil2 = SoilScale.objects.create(name='other_name')
+    return soil2
 
 
 @pytest.fixture

@@ -636,6 +636,8 @@ def test_plan_update_view_post(user, veggie2, plan, veggie_bed, bed, veggie):
 
     plan.refresh_from_db()
     veggie_bed.refresh_from_db()
+
+    assert response.status_code == 200
     assert plan.name == 'plan_name'
     assert veggie_bed.bed.name == 'bed_name'
     assert veggie_bed.veggie == veggie2
@@ -677,11 +679,31 @@ def test_bed_update_view_get_not_logged(bed):
 
 
 @pytest.mark.django_db()
-def test_bed_update_view_post(bed):
-    bed.name = 'other_name'
+def test_bed_update_view_post(user, bed, sun2, soil2, water2):
+    client = Client()
+    client.force_login(user)
+    url = reverse('bed_update', kwargs={'pk': bed.pk})
+    data = {
+        'name': "other_bed_name",
+        'sun': sun2.pk,
+        'water': water2.pk,
+        'soil': soil2.pk,
+    }
+    response = client.post(url, data, follow=True)
+    bed.name = 'other_bed_name'
+    bed.sun_id = sun2.pk
+    bed.water_id = water2.pk
+    bed.soil_id = soil2.pk
     bed.save()
+    bed.sun.save()
+    bed.water.save()
+    bed.soil.save()
     bed.refresh_from_db()
-    assert bed.name == 'other_name'
+    assert response.status_code == 200
+    assert bed.name == 'other_bed_name'
+    assert bed.sun == sun2
+    assert bed.water == water2
+    assert bed.soil == soil2
 
 
 @pytest.mark.django_db
