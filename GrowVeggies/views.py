@@ -96,7 +96,7 @@ class SeedCreateView(LoginRequiredMixin, View):
             company = form.cleaned_data['company']
             comment = form.cleaned_data['comment']
             Seed.objects.create(owner=user, veggie=veggie, variety=variety, company=company, comment=comment)
-            return redirect('seed_add')
+            return redirect('seeds')
         return render(request, 'seed_add.html', {'form': form})
 
 
@@ -140,7 +140,9 @@ class SeedsListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         seeds = Seed.objects.filter(owner=user)
-        return render(request, 'seeds.html', {'seeds': seeds})
+        number_of_seeds = seeds.count()
+        return render(request, 'seeds.html', {'seeds': seeds,
+                                              'number_of_seeds': number_of_seeds})
 
 
 class GrowVeggieCreateView(LoginRequiredMixin, View):
@@ -208,7 +210,9 @@ class GrowVeggieListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         grow_veggies = GrowVeggie.objects.filter(owner=user)
-        return render(request, 'grow_veggies.html', {'grow_veggies': grow_veggies})
+        number_of_conditions = grow_veggies.count()
+        return render(request, 'grow_veggies.html', {'grow_veggies': grow_veggies,
+                                                     'number_of_conditions': number_of_conditions})
 
 
 class PlanView(LoginRequiredMixin, View):
@@ -345,7 +349,9 @@ class PlanListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         plans = Plan.objects.filter(owner=user)
-        return render(request, 'plan_list.html', {'plans': plans})
+        number_of_plans = plans.count()
+        return render(request, 'plan_list.html', {'plans': plans,
+                                                  'number_of_plans': number_of_plans})
 
 
 class ShowVeggiesView(LoginRequiredMixin, View):

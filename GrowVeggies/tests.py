@@ -218,6 +218,7 @@ def test_seeds_list_view_get(user, seeds):
     response = client.get(url)
     assert response.status_code == 200
     assert list(response.context['seeds']) == seeds[0]
+    assert response.context['number_of_seeds'] == 5
 
 
 def test_seed_list_view_get_not_logged():
@@ -366,6 +367,7 @@ def test_grow_veggie_list_view_get(user, grow_veggies):
     response = client.get(url)
     assert response.status_code == 200
     assert list(response.context['grow_veggies']) == grow_veggies[0]
+    assert response.context['number_of_conditions'] == 3
 
 
 def test_grow_veggie_list_view_get_not_logged():
@@ -434,12 +436,14 @@ def test_plan_option2_view_get_not_logged():
 
 
 @pytest.mark.django_db
-def test_plan_list_view_get(user):
+def test_plan_list_view_get(user, plans):
     client = Client()
     client.force_login(user)
     url = reverse('plan_list')
     response = client.get(url)
     assert response.status_code == 200
+    assert list(response.context['plans']) == plans[0]
+    assert response.context['number_of_plans'] == 3
 
 
 def test_plan_list_view_get_not_logged():

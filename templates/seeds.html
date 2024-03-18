@@ -2,7 +2,9 @@
 {% block content %}
     <div>
     All your seeds, finally in one place!
-     <br><br>
+    <br><br>
+    Number of seeds in your collection: <b>{{ number_of_seeds }}</b> 
+    <br><br>
     Got the new seed? Add it to your collection! 
     <button class="button">
     <a class="style" href="{% url "seed_add" %}">ADD SEED</a>
