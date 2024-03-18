@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 
 from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, VeggieBed, VeggieFamily
 from GrowVeggies.models import SunScale, WaterScale, SoilScale
