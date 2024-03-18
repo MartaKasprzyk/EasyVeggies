@@ -349,7 +349,9 @@ class PlanListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         plans = Plan.objects.filter(owner=user)
-        return render(request, 'plan_list.html', {'plans': plans})
+        number_of_plans = plans.count()
+        return render(request, 'plan_list.html', {'plans': plans,
+                                                  'number_of_plans': number_of_plans})
 
 
 class ShowVeggiesView(LoginRequiredMixin, View):
