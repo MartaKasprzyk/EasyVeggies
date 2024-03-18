@@ -436,12 +436,23 @@ def test_plan_option2_view_get_not_logged():
 
 
 @pytest.mark.django_db
-def test_plan_list_view_get(user):
+def test_plan_list_view_get(user, plans):
     client = Client()
     client.force_login(user)
     url = reverse('plan_list')
     response = client.get(url)
     assert response.status_code == 200
+    assert list(response.context['plans']) == plans[0]
+    assert response.context['number_of_plans'] == 3
+
+@pytest.mark.django_db
+def test_plan_list_view_get(user2, plans):
+    client = Client()
+    client.force_login(user2)
+    url = reverse('plan_list')
+    response = client.get(url)
+    assert response.status_code == 302
+    assert not list(response.context['plans']) == plans[0]
 
 
 def test_plan_list_view_get_not_logged():

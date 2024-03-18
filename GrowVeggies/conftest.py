@@ -43,7 +43,7 @@ def seed(user, veggie, company):
 def seeds(user, user2, veggie, company):
     seeds1 = []
     seeds2 = []
-    for x in range(5):
+    for i in range(5):
         seed1 = Seed.objects.create(owner=user, veggie=veggie, variety='variety', company=company, comment='comment')
         seed2 = Seed.objects.create(owner=user2, veggie=veggie, variety='variety', company=company, comment='comment')
         seeds1.append(seed1)
@@ -54,7 +54,7 @@ def seeds(user, user2, veggie, company):
 @pytest.fixture
 def sun_scale():
     scale = []
-    for x in range(3):
+    for i in range(3):
         the_sun = SunScale.objects.create(name='name')
         scale.append(the_sun)
     return scale
@@ -63,7 +63,7 @@ def sun_scale():
 @pytest.fixture
 def water_scale():
     scale = []
-    for x in range(2):
+    for i in range(2):
         the_water = WaterScale.objects.create(name='name')
         scale.append(the_water)
     return scale
@@ -72,7 +72,7 @@ def water_scale():
 @pytest.fixture
 def soil_scale():
     scale = []
-    for x in range(2):
+    for i in range(2):
         the_soil = SoilScale.objects.create(name='name')
         scale.append(the_soil)
     return scale
@@ -102,7 +102,7 @@ def grow_veggie(user, veggie, sun_scale, water_scale, soil_scale, month):
 def grow_veggies(user, user2, veggie, sun_scale, water_scale, soil_scale, month):
     grow_veggies_list1 = []
     grow_veggies_list2 = []
-    for x in range(3):
+    for i in range(3):
         grow_veggie_1 = GrowVeggie.objects.create(owner=user, veggie=veggie, comment='comment')
         grow_veggie_1.sun.set(sun_scale)
         grow_veggie_1.water.set(water_scale)
@@ -170,5 +170,17 @@ def veggie_bed(veggie, bed, plan):
 def plan(user):
     plan = Plan.objects.create(owner=user, name='name')
     return plan
+
+@pytest.fixture
+def plans(user, user2):
+    plans_user = []
+    plans_user2 = []
+    for i in range(3):
+        plan_1 = Plan.objects.create(owner=user, name='name')
+        plan_2 = Plan.objects.create(owner=user2, name='name2')
+        plans_user.append(plan_1)
+        plans_user2.append(plan_2)
+    return plans_user, plans_user2
+
 
 
