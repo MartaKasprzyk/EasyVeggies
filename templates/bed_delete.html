@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div>
+        <p> Are you sure you want to delete this record? </p>
+        <ul><b>BED NAME: </b>{{ bed.name }}</ul>
+        <ul><b>SUN: </b>{{ bed.sun }}</ul>
+        <ul><b>WATER: </b>{{ bed.water }}</ul>
+        <ul><b>SOIL: </b>{{ bed.soil }}</ul>
+        <br>
+        <form method="post">
+            {% csrf_token %}
+            <input type="submit" value="YES" name="delete" class="button">
+            <input type="submit" value="NO" name="delete" class="button">
+        </form>
+    </div>
+{% endblock %}

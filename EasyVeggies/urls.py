@@ -46,5 +46,8 @@ urlpatterns = [
     path('plan/details/<int:pk>/', views.PlanDetailsView.as_view(), name='plan_details'),
     path('plan/update/<int:pk>/', views.PlanUpdateView.as_view(), name='plan_update'),
     path('plan/delete/<int:pk>/', views.PlanDeleteView.as_view(), name='plan_delete'),
+    path('bed/details/<int:pk>/', views.BedDetailsView.as_view(), name='bed_details'),
+    path('bed/update/<int:pk>/', views.BedUpdateView.as_view(), name='bed_update'),
+    path('bed/delete/<int:pk>/', views.BedDeleteView.as_view(), name='bed_delete'),
     path('veggies/show/', views.ShowVeggiesView.as_view(), name='show_veggies'),
     ]
