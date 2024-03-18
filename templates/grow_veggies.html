@@ -22,7 +22,7 @@
             </tr>
                  {% for grow_veggie in grow_veggies %}
                      <tr>
-                     <td>{{ forloop.counter }}</td>
+                     <td>{{ forloop.counter|add:start_index }}</td>
                      <td>{{ grow_veggie.veggie }}</td>
                      <td>{% for sun in grow_veggie.sun.all %}
                             {{ sun }}, 
@@ -44,6 +44,26 @@
                          <a class="style" href="{% url "grow_veggie_delete" pk=grow_veggie.pk%}">delete</a>
                      </button></td>
                 {% endfor %}
-        </table>  
+        </table> 
+        <nav aria-label="Page navigation example">
+              <ul class="pagination justify-content-center">
+              
+                {% if grow_veggies.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ grow_veggies.previous_page_number }}">&laquo; previous</a></li>
+                {% endif %}
+                
+                {% for page in grow_veggies.paginator.page_range %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+                {% endfor %}
+                
+                {% if grow_veggies.has_next%}
+                    <li class="page-item">
+                        <a  class="page-link" href="?page={{ grow_veggies.next_page_number }}">next &raquo;</a></li>
+                {% endif %}
+              
+              </ul>
+        </nav>
     </div>
 {% endblock %}

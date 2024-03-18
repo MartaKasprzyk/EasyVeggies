@@ -219,10 +219,20 @@ class GrowVeggieListView(LoginRequiredMixin, View):
 
     def get(self, request):
         user = request.user
-        grow_veggies = GrowVeggie.objects.filter(owner=user)
-        number_of_conditions = grow_veggies.count()
+        grow_veggies_list = GrowVeggie.objects.filter(owner=user).order_by('veggie__name')
+        conditions_per_page = 3
+
+        paginator = Paginator(grow_veggies_list, conditions_per_page)
+        page = request.GET.get('page')
+        grow_veggies = paginator.get_page(page)
+
+        start_index = (grow_veggies.number - 1) * conditions_per_page + 1
+
+        number_of_conditions = grow_veggies_list.count()
+
         return render(request, 'grow_veggies.html', {'grow_veggies': grow_veggies,
-                                                     'number_of_conditions': number_of_conditions})
+                                                     'number_of_conditions': number_of_conditions,
+                                                     'start_index': start_index})
 
 
 class PlanView(LoginRequiredMixin, View):
