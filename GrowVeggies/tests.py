@@ -681,7 +681,7 @@ def test_bed_delete_view_post(bed):
 
 
 @pytest.mark.django_db
-def test_grow_veggie_delete_view_post_other_user(bed, user2):
+def test_bed_delete_view_post_other_user(bed, user2):
     client = Client()
     client.force_login(user2)
     url = reverse('bed_delete', kwargs={'pk': bed.pk})
