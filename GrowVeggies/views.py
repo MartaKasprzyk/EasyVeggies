@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -112,7 +113,7 @@ class SeedUpdateView(LoginRequiredMixin, View):
         form = SeedUpdateForm(request.POST, instance=seed)
         if form.is_valid():
             form.save()
-            return redirect('seed_add', seed.pk)
+            return redirect('seeds')
         return render(request, 'form.html', {'form': form})
 
 
@@ -139,10 +140,19 @@ class SeedsListView(LoginRequiredMixin, View):
 
     def get(self, request):
         user = request.user
-        seeds = Seed.objects.filter(owner=user)
-        number_of_seeds = seeds.count()
-        return render(request, 'seeds.html', {'seeds': seeds,
-                                              'number_of_seeds': number_of_seeds})
+        seeds_list = Seed.objects.filter(owner=user).order_by('veggie__name')
+        seeds_per_page = 3
+
+        paginator = Paginator(seeds_list, seeds_per_page)
+        page = request.GET.get('page')
+        seeds = paginator.get_page(page)
+
+        start_index = (seeds.number - 1) * seeds_per_page + 1
+
+        number_of_seeds = seeds_list.count()
+
+        return render(request, 'seeds.html', {'seeds': seeds, 'number_of_seeds': number_of_seeds,
+                                              'start_index': start_index})
 
 
 class GrowVeggieCreateView(LoginRequiredMixin, View):
