@@ -210,7 +210,9 @@ class GrowVeggieListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         grow_veggies = GrowVeggie.objects.filter(owner=user)
-        return render(request, 'grow_veggies.html', {'grow_veggies': grow_veggies})
+        number_of_conditions = grow_veggies.count()
+        return render(request, 'grow_veggies.html', {'grow_veggies': grow_veggies,
+                                                     'number_of_conditions': number_of_conditions})
 
 
 class PlanView(LoginRequiredMixin, View):
