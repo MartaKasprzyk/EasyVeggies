@@ -377,6 +377,30 @@ class PlanUpdateView(LoginRequiredMixin, View):
                                                     'families': families, 'veggies': veggies, 'progress': progress})
 
 
+    def post(self, request, pk):
+        plan = Plan.objects.get(pk=pk)
+        plan_veggie_beds = VeggieBed.objects.filter(plan_id=plan)
+
+        plan_name = request.POST.get('plan_name')
+        bed_name = request.POST.getlist('bed_name')
+        veggie = request.POST.getlist('veggie')
+        progress = request.POST.getlist('progress')
+
+        plan.name = plan_name
+        plan.save()
+
+        index = 0
+        for veggie_bed in plan_veggie_beds:
+            veggie_bed.bed.name = bed_name[index]
+            veggie_bed.veggie_id = veggie[index]
+            veggie_bed.progress = progress[index]
+            veggie_bed.bed.save()
+            veggie_bed.veggie.save()
+            veggie_bed.save()
+            index += 1
+
+        return redirect('plan_details', pk=plan.pk)
+
 
 class PlanDeleteView(UserPassesTestMixin, View):
     def test_func(self):

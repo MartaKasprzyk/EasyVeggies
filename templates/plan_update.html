@@ -18,7 +18,7 @@
             {% for veggie_bed in veggie_beds %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td><input type="text" value="{{ veggie_bed.bed.name }}"></td>
+                    <td><input type="text" name="bed_name" value="{{ veggie_bed.bed.name }}"></td>
                     <td><select name="family" id="family" class="select-styling">
                         {% for family in families %}
                             <option value="{{ family.pk }}" 
