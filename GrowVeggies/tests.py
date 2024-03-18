@@ -367,6 +367,7 @@ def test_grow_veggie_list_view_get(user, grow_veggies):
     response = client.get(url)
     assert response.status_code == 200
     assert list(response.context['grow_veggies']) == grow_veggies[0]
+    assert response.context['number_of_conditions'] == 3
 
 
 def test_grow_veggie_list_view_get_not_logged():
