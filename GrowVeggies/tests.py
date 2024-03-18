@@ -294,10 +294,10 @@ def test_grow_veggie_update_view_get_not_logged(grow_veggie):
 
 @pytest.mark.django_db()
 def test_grow_veggie_update_view_post(grow_veggie, veggie2):
-    grow_veggie.veggie = veggie2.pk
+    grow_veggie.veggie = veggie2
     grow_veggie.save()
     grow_veggie.refresh_from_db()
-    assert grow_veggie.veggie == veggie2.pk
+    assert grow_veggie.veggie == veggie2
 
 
 @pytest.mark.django_db()
