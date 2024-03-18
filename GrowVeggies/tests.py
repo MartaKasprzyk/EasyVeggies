@@ -218,6 +218,7 @@ def test_seeds_list_view_get(user, seeds):
     response = client.get(url)
     assert response.status_code == 200
     assert list(response.context['seeds']) == seeds[0]
+    assert response.context['number_of_seeds'] == 5
 
 
 def test_seed_list_view_get_not_logged():
