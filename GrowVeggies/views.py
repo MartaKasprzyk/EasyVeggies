@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 
 from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, VeggieBed, VeggieFamily
 from GrowVeggies.models import SunScale, WaterScale, SoilScale
@@ -377,6 +376,30 @@ class PlanUpdateView(LoginRequiredMixin, View):
         return render(request, "plan_update.html", {'plan': plan, 'veggie_beds': veggie_beds,
                                                     'families': families, 'veggies': veggies, 'progress': progress})
 
+
+    def post(self, request, pk):
+        plan = Plan.objects.get(pk=pk)
+        plan_veggie_beds = VeggieBed.objects.filter(plan_id=plan)
+
+        plan_name = request.POST.get('plan_name')
+        bed_name = request.POST.getlist('bed_name')
+        veggie = request.POST.getlist('veggie')
+        progress = request.POST.getlist('progress')
+
+        plan.name = plan_name
+        plan.save()
+
+        index = 0
+        for veggie_bed in plan_veggie_beds:
+            veggie_bed.bed.name = bed_name[index]
+            veggie_bed.veggie_id = veggie[index]
+            veggie_bed.progress = progress[index]
+            veggie_bed.bed.save()
+            veggie_bed.veggie.save()
+            veggie_bed.save()
+            index += 1
+
+        return redirect('plan_details', pk=plan.pk)
 
 
 class PlanDeleteView(UserPassesTestMixin, View):

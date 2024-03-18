@@ -55,8 +55,8 @@ def seeds(user, user2, veggie, company):
 def sun_scale():
     scale = []
     for x in range(3):
-        sun = SunScale.objects.create(name='name')
-        scale.append(sun)
+        the_sun = SunScale.objects.create(name='name')
+        scale.append(the_sun)
     return scale
 
 
@@ -64,8 +64,8 @@ def sun_scale():
 def water_scale():
     scale = []
     for x in range(2):
-        water = WaterScale.objects.create(name='name')
-        scale.append(water)
+        the_water = WaterScale.objects.create(name='name')
+        scale.append(the_water)
     return scale
 
 
@@ -73,8 +73,8 @@ def water_scale():
 def soil_scale():
     scale = []
     for x in range(2):
-        soil = SoilScale.objects.create(name='name')
-        scale.append(soil)
+        the_soil = SoilScale.objects.create(name='name')
+        scale.append(the_soil)
     return scale
 
 
@@ -137,6 +137,24 @@ def soil():
 
 
 @pytest.fixture
+def sun2():
+    sun2 = SunScale.objects.create(name='other_name')
+    return sun2
+
+
+@pytest.fixture
+def water2():
+    water2 = WaterScale.objects.create(name='other_name')
+    return water2
+
+
+@pytest.fixture
+def soil2():
+    soil2 = SoilScale.objects.create(name='other_name')
+    return soil2
+
+
+@pytest.fixture
 def bed(user, sun, water, soil):
     bed = Bed.objects.create(owner=user, name='name', sun=sun, water=water, soil=soil)
     return bed
@@ -144,7 +162,7 @@ def bed(user, sun, water, soil):
 
 @pytest.fixture
 def veggie_bed(veggie, bed, plan):
-    veggie_bed = VeggieBed.objects.create(veggie=veggie.pk, bed=bed.pk, progress=1, plan=plan.pk)
+    veggie_bed = VeggieBed.objects.create(veggie=veggie, bed=bed, progress=1, plan=plan)
     return veggie_bed
 
 
@@ -152,3 +170,5 @@ def veggie_bed(veggie, bed, plan):
 def plan(user):
     plan = Plan.objects.create(owner=user, name='name')
     return plan
+
+

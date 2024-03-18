@@ -260,7 +260,7 @@ def test_grow_veggie_create_view_post(user, veggie, sun_scale, water_scale, soil
     client.force_login(user)
     url = reverse('grow_veggie_add')
     data = {'veggie': veggie.pk,
-            'sun': [sun_scale[0].pk, soil_scale[1].pk],
+            'sun': [sun_scale[0].pk, sun_scale[1].pk],
             'water': [water_scale[0].pk, water_scale[1].pk],
             'soil': [soil_scale[0].pk, soil_scale[1].pk],
             'sow': [month[0].pk, month[1].pk],
@@ -293,19 +293,29 @@ def test_grow_veggie_update_view_get_not_logged(grow_veggie):
 
 
 @pytest.mark.django_db()
-def test_grow_veggie_update_view_post(grow_veggie, veggie2):
-    grow_veggie.veggie = veggie2
-    grow_veggie.save()
+def test_grow_veggie_update_view_post(user, grow_veggie, veggie2, sun_scale, water_scale, soil_scale, month):
+    client = Client()
+    client.force_login(user)
+    url = reverse('grow_veggie_update', kwargs={'pk': grow_veggie.pk})
+    data = {
+        'veggie': veggie2.pk,
+        'sun': [sun_scale[1].pk],
+        'water': [water_scale[1].pk],
+        'soil': [soil_scale[1].pk],
+        'sow': [month[1].pk],
+        'comment': 'comment2',
+    }
+    response = client.post(url, data, follow=True)
+
     grow_veggie.refresh_from_db()
+
+    assert response.status_code == 200
     assert grow_veggie.veggie == veggie2
-
-
-@pytest.mark.django_db()
-def test_grow_veggie_update_view_post(grow_veggie):
-    grow_veggie.comment = 'other comment'
-    grow_veggie.save()
-    grow_veggie.refresh_from_db()
-    assert grow_veggie.comment == 'other comment'
+    assert grow_veggie.comment == 'comment2'
+    assert sun_scale[1] in list(grow_veggie.sun.all())
+    assert water_scale[1] in list(grow_veggie.water.all())
+    assert soil_scale[1] in list(grow_veggie.soil.all())
+    assert month[1] in list(grow_veggie.sow.all())
 
 
 @pytest.mark.django_db
@@ -608,6 +618,42 @@ def test_plan_update_view_get_not_logged(plan):
     assert response.status_code == 302
 
 
+@pytest.mark.django_db()
+def test_plan_update_view_post(user, veggie2, plan, veggie_bed, bed, veggie):
+    client = Client()
+    client.force_login(user)
+    url = reverse('plan_update', kwargs={'pk': plan.pk})
+    data = {'plan_name': 'plan_name',
+            'bed_name': 'bed_name',
+            'veggie': veggie2.pk,
+            'progress': 3,
+            'update_plan': "UPDATE PLAN",
+            'plan_veggie_beds': veggie_bed.pk,
+            }
+    response = client.post(url, data, follow=True)
+
+    plan.name = 'plan_name'
+    plan.save()
+    plan.refresh_from_db()
+
+    veggie_bed.bed.name = "bed_name"
+    veggie_bed.veggie_id = veggie2.pk
+    veggie_bed.progress = 3
+
+    veggie_bed.bed.save()
+    veggie_bed.veggie.save()
+    veggie_bed.save()
+
+    plan.refresh_from_db()
+    veggie_bed.refresh_from_db()
+
+    assert response.status_code == 200
+    assert plan.name == 'plan_name'
+    assert veggie_bed.bed.name == 'bed_name'
+    assert veggie_bed.veggie == veggie2
+    assert veggie_bed.progress == 3
+
+
 @pytest.mark.django_db
 def test_bed_details_view_get(user, bed):
     client = Client()
@@ -643,11 +689,31 @@ def test_bed_update_view_get_not_logged(bed):
 
 
 @pytest.mark.django_db()
-def test_bed_update_view_post(bed):
-    bed.name = 'other_name'
+def test_bed_update_view_post(user, bed, sun2, soil2, water2):
+    client = Client()
+    client.force_login(user)
+    url = reverse('bed_update', kwargs={'pk': bed.pk})
+    data = {
+        'name': "other_bed_name",
+        'sun': sun2.pk,
+        'water': water2.pk,
+        'soil': soil2.pk,
+    }
+    response = client.post(url, data, follow=True)
+    bed.name = 'other_bed_name'
+    bed.sun_id = sun2.pk
+    bed.water_id = water2.pk
+    bed.soil_id = soil2.pk
     bed.save()
+    bed.sun.save()
+    bed.water.save()
+    bed.soil.save()
     bed.refresh_from_db()
-    assert bed.name == 'other_name'
+    assert response.status_code == 200
+    assert bed.name == 'other_bed_name'
+    assert bed.sun == sun2
+    assert bed.water == water2
+    assert bed.soil == soil2
 
 
 @pytest.mark.django_db
