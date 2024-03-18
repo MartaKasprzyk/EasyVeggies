@@ -182,5 +182,3 @@ def plans(user, user2):
         plans_user2.append(plan_2)
     return plans_user, plans_user2
 
-
-
