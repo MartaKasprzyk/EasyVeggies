@@ -460,6 +460,26 @@ def test_plan_option1_view_post(user, family, veggie):
 
 
 @pytest.mark.django_db
+def test_plan_option2_view_post(user, family, veggie):
+    client = Client()
+    client.force_login(user)
+    url = reverse('plan_option2')
+    data = {'beds_amount': 1,
+            'bed_name': 'bed name',
+            'family': family.pk,
+            'veggie': veggie.pk,
+            'progress': 1,
+            'plan_name': 'plan name',
+            'save_plan': "SAVE PLAN",
+            }
+    response = client.post(url, data, follow=True)
+    bed_obj = Bed.objects.get(owner=user, name='bed name')
+    plan_obj = Plan.objects.get(owner=user, name='plan name')
+    veggie_bed_obj = VeggieBed.objects.get(veggie=veggie, bed_id=bed_obj, progress=1, plan_id=plan_obj)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
 def test_plan_details_view_get(plan):
     client = Client()
     client.force_login(plan.owner)
@@ -507,6 +527,27 @@ def test_plan_option2_upload__view_get_not_logged():
     url = reverse('plan_option2_upload_plan')
     response = client.get(url)
     assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_plan_option2_upload_view_post(user, family, veggie, plan):
+    client = Client()
+    client.force_login(user)
+    url = reverse('plan_option2_upload_plan')
+    data = {'prev_plan': plan.pk,
+            'amount': 1,
+            'bed_name': 'bed name',
+            'family': family.pk,
+            'veggie': veggie.pk,
+            'progress': 1,
+            'plan_name': 'plan name',
+            'save_plan': "SAVE PLAN",
+            }
+    response = client.post(url, data, follow=True)
+    bed_obj = Bed.objects.get(owner=user, name='bed name')
+    plan_obj = Plan.objects.get(owner=user, name='plan name')
+    veggie_bed_obj = VeggieBed.objects.get(veggie=veggie, bed_id=bed_obj, progress=1, plan_id=plan_obj)
+    assert response.status_code == 200
 
 
 @pytest.mark.django_db
