@@ -444,22 +444,19 @@ def test_plan_option1_view_post(user, family, veggie):
     client = Client()
     client.force_login(user)
     url = reverse('plan_option1')
-    data = {'bed': 'bed name',
-            'family': family,
-            'veggie': veggie,
+    data = {'beds_amount': 1,
+            'bed_name': 'bed name',
+            'family': family.pk,
+            'veggie': veggie.pk,
             'progress': 1,
-            'plan': 'plan name',
+            'plan_name': 'plan name',
+            'save_plan': "SAVE PLAN",
             }
     response = client.post(url, data, follow=True)
+    bed_obj = Bed.objects.get(owner=user, name='bed name')
+    plan_obj = Plan.objects.get(owner=user, name='plan name')
+    veggie_bed_obj = VeggieBed.objects.get(veggie=veggie, bed_id=bed_obj, progress=1, plan_id=plan_obj)
     assert response.status_code == 200
-    assert Bed.objects.get(owner=user, name='bed name')
-    assert Plan.objects.get(owner=user, name='plan name')
-    data2 = {
-        'bed': Bed.objects.get(owner=user, name='bed name'),
-        'plan': Plan.objects.get(owner=user, name='plan name'),
-    }
-    assert VeggieBed.objects.get(owner=user, veggie=veggie, bed=data2['bed'], progress=1, plan=data2['plan'])
-    # TypeError: int() argument must be a string, a bytes-like object or a real number, not 'NoneType'
 
 
 @pytest.mark.django_db
