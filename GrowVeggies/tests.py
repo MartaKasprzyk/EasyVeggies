@@ -260,7 +260,7 @@ def test_grow_veggie_create_view_post(user, veggie, sun_scale, water_scale, soil
     client.force_login(user)
     url = reverse('grow_veggie_add')
     data = {'veggie': veggie.pk,
-            'sun': [sun_scale[0].pk, soil_scale[1].pk],
+            'sun': [sun_scale[0].pk, sun_scale[1].pk],
             'water': [water_scale[0].pk, water_scale[1].pk],
             'soil': [soil_scale[0].pk, soil_scale[1].pk],
             'sow': [month[0].pk, month[1].pk],
@@ -293,19 +293,29 @@ def test_grow_veggie_update_view_get_not_logged(grow_veggie):
 
 
 @pytest.mark.django_db()
-def test_grow_veggie_update_view_post(grow_veggie, veggie2):
-    grow_veggie.veggie = veggie2
-    grow_veggie.save()
+def test_grow_veggie_update_view_post(user, grow_veggie, veggie2, sun_scale, water_scale, soil_scale, month):
+    client = Client()
+    client.force_login(user)
+    url = reverse('grow_veggie_update', kwargs={'pk': grow_veggie.pk})
+    data = {
+        'veggie': veggie2.pk,
+        'sun': [sun_scale[1].pk],
+        'water': [water_scale[1].pk],
+        'soil': [soil_scale[1].pk],
+        'sow': [month[1].pk],
+        'comment': 'comment2',
+    }
+    response = client.post(url, data, follow=True)
+
     grow_veggie.refresh_from_db()
+
+    assert response.status_code == 200
     assert grow_veggie.veggie == veggie2
-
-
-@pytest.mark.django_db()
-def test_grow_veggie_update_view_post(grow_veggie):
-    grow_veggie.comment = 'other comment'
-    grow_veggie.save()
-    grow_veggie.refresh_from_db()
-    assert grow_veggie.comment == 'other comment'
+    assert grow_veggie.comment == 'comment2'
+    assert sun_scale[1] in list(grow_veggie.sun.all())
+    assert water_scale[1] in list(grow_veggie.water.all())
+    assert soil_scale[1] in list(grow_veggie.soil.all())
+    assert month[1] in list(grow_veggie.sow.all())
 
 
 @pytest.mark.django_db
