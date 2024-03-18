@@ -22,7 +22,7 @@
         </tr>
              {% for seed in seeds %}
                  <tr>
-                 <td>{{ forloop.counter }}</td>
+                 <td>{{ forloop.counter0|add:start_index }}</td>
                  <td>{{ seed.veggie }}</td>
                  <td>{{ seed.variety }}</td>
                  <td>{{ seed.company }}</td>
@@ -34,6 +34,27 @@
                      <a class="style" href="{% url "seed_delete" pk=seed.pk%}">delete</a>
                  </button></td>
             {% endfor %}
-    </table>  
+    </table>
+    <br><br>
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+
+            {% if seeds.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ seeds.previous_page_number }}">&laquo; previous</a></li>
+            {% endif %}
+
+            {% for page in seeds.paginator.page_range %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if seeds.has_next%}
+                <li class="page-item">
+                    <a  class="page-link" href="?page={{ seeds.next_page_number }}">next &raquo;</a></li>
+            {% endif %}
+
+          </ul>
+        </nav>
     </div>
 {% endblock %}

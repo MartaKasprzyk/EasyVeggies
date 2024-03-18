@@ -16,7 +16,7 @@
         <tbody>
                  {% for plan in plans %}
                      <tr>
-                     <td>{{ forloop.counter }}</td>
+                     <td>{{ forloop.counter0|add:start_index }}</td>
                      <td>{{ plan.name }}</td>
                      <td>
                          <button class="button">
@@ -35,6 +35,26 @@
                      </td>
                 {% endfor %}
         </tbody>
-        </table>  
+        </table>
+            <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+
+            {% if plans.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ plans.previous_page_number }}">&laquo; previous</a></li>
+            {% endif %}
+
+            {% for page in plans.paginator.page_range %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if plans.has_next%}
+                <li class="page-item">
+                    <a  class="page-link" href="?page={{ plans.next_page_number }}">next &raquo;</a></li>
+            {% endif %}
+
+          </ul>
+        </nav>
     </div>
 {% endblock %}

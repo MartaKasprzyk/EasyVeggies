@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -112,7 +113,7 @@ class SeedUpdateView(LoginRequiredMixin, View):
         form = SeedUpdateForm(request.POST, instance=seed)
         if form.is_valid():
             form.save()
-            return redirect('seed_add', seed.pk)
+            return redirect('seeds')
         return render(request, 'form.html', {'form': form})
 
 
@@ -139,10 +140,19 @@ class SeedsListView(LoginRequiredMixin, View):
 
     def get(self, request):
         user = request.user
-        seeds = Seed.objects.filter(owner=user)
-        number_of_seeds = seeds.count()
-        return render(request, 'seeds.html', {'seeds': seeds,
-                                              'number_of_seeds': number_of_seeds})
+        seeds_list = Seed.objects.filter(owner=user).order_by('veggie__name')
+        seeds_per_page = 3
+
+        paginator = Paginator(seeds_list, seeds_per_page)
+        page = request.GET.get('page')
+        seeds = paginator.get_page(page)
+
+        start_index = (seeds.number - 1) * seeds_per_page + 1
+
+        number_of_seeds = seeds_list.count()
+
+        return render(request, 'seeds.html', {'seeds': seeds, 'number_of_seeds': number_of_seeds,
+                                              'start_index': start_index})
 
 
 class GrowVeggieCreateView(LoginRequiredMixin, View):
@@ -166,7 +176,7 @@ class GrowVeggieCreateView(LoginRequiredMixin, View):
             grow_veggie.water.set(water)
             grow_veggie.soil.set(soil)
             grow_veggie.sow.set(sow)
-            return redirect('grow_veggie_add')
+            return redirect('grow_veggies')
         return render(request, 'grow_veggie_add.html', {'form': form})
 
 
@@ -209,10 +219,20 @@ class GrowVeggieListView(LoginRequiredMixin, View):
 
     def get(self, request):
         user = request.user
-        grow_veggies = GrowVeggie.objects.filter(owner=user)
-        number_of_conditions = grow_veggies.count()
+        grow_veggies_list = GrowVeggie.objects.filter(owner=user).order_by('veggie__name')
+        conditions_per_page = 3
+
+        paginator = Paginator(grow_veggies_list, conditions_per_page)
+        page = request.GET.get('page')
+        grow_veggies = paginator.get_page(page)
+
+        start_index = (grow_veggies.number - 1) * conditions_per_page + 1
+
+        number_of_conditions = grow_veggies_list.count()
+
         return render(request, 'grow_veggies.html', {'grow_veggies': grow_veggies,
-                                                     'number_of_conditions': number_of_conditions})
+                                                     'number_of_conditions': number_of_conditions,
+                                                     'start_index': start_index})
 
 
 class PlanView(LoginRequiredMixin, View):
@@ -348,10 +368,19 @@ class PlanCreateOption2UploadView(PlanCommonFunctionsMixin, LoginRequiredMixin, 
 class PlanListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
-        plans = Plan.objects.filter(owner=user)
-        number_of_plans = plans.count()
+        plan_list = Plan.objects.filter(owner=user).order_by('name')
+        plans_per_page = 5
+
+        paginator = Paginator(plan_list, plans_per_page)
+        page = request.GET.get('page')
+        plans = paginator.get_page(page)
+
+        start_index = (plans.number - 1) * plans_per_page + 1
+
+        number_of_plans = plan_list.count()
+
         return render(request, 'plan_list.html', {'plans': plans,
-                                                  'number_of_plans': number_of_plans})
+                                                  'number_of_plans': number_of_plans, 'start_index': start_index})
 
 
 class ShowVeggiesView(LoginRequiredMixin, View):
