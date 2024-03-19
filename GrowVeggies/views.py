@@ -390,15 +390,18 @@ class PlanListView(LoginRequiredMixin, View):
                                                   'number_of_plans': number_of_plans, 'start_index': start_index})
 
 
-class ShowVeggiesView(LoginRequiredMixin, View):
+class FilterVeggiesView(LoginRequiredMixin, View):
     def get(self, request):
         family = request.GET.get('family', '')
         families = VeggieFamily.objects.all().order_by("order")
+        family_name = ''
         veggies = Veggie.objects.all().order_by("name")
         if family:
             veggies = veggies.filter(family=family).order_by("name")
+            family_name = VeggieFamily.objects.filter(pk=family)
 
-        return render(request, "test.html", {'families': families, 'veggies': veggies})
+        return render(request, "filter_veggies.html", {'families': families, 'veggies': veggies,
+                                                       'family': family_name})
 
 
 class PlanDetailsView(LoginRequiredMixin, View):

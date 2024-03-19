@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div>
+    Choose family and check what veggies belong to it.
+    <br><br>
+    Missing some veggies?
+    <a class="style" href="{% url 'veggie_add' %}">Add veggie.</a>
+    <br><br><br>
+    <form method="get">
+    <select name="family" id="family" class="select-styling">
+        <option value="" disabled selected style="display:none;">Choose...</option>
+        {% for family in families %}
+            <option value="{{ family.id }}">{{ family.name }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="show veggies" name="show_veggies" class="button">
+    </form>
+    <br>
+    Veggies that belong to the <b>{{ family.values.get.name }}</b> family:
+    <br><br>
+    {% for veggie in veggies %}
+        <li>{{ veggie.name }}</li>
+    {% endfor %}
+    </div>
+{% endblock %}
