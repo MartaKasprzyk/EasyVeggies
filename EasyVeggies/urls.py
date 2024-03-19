@@ -52,4 +52,5 @@ urlpatterns = [
     path('veggies/show/', views.ShowVeggiesView.as_view(), name='show_veggies'),
     path('seeds/pdf/', views.SeedsPdfView.as_view(), name='seeds_pdf'),
     path('growveggies/pdf/', views.GrowVeggiesPdfView.as_view(), name='grow_veggies_pdf'),
+    path('plan/details/pdf/<int:pk>/', views.PlanDetailsPdfView.as_view(), name='plan_details_pdf'),
     ]

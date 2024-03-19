@@ -16,6 +16,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 
+from datetime import datetime
 
 class HomeView(View):
 
@@ -563,7 +564,7 @@ class GrowVeggiesPdfView(LoginRequiredMixin, PdfGeneratorMixin, View):
 
             sow = [sow.name for sow in condition.sow.all().order_by('order')]
             formatted_sow = ', '.join(sow)
-            lines.append(f'sun: {formatted_sow}')
+            lines.append(f'Sowing: {formatted_sow}')
 
             lines.append(f'Comments: {condition.comment}')
             lines.append(" ")
@@ -572,3 +573,25 @@ class GrowVeggiesPdfView(LoginRequiredMixin, PdfGeneratorMixin, View):
 
         return FileResponse(buffer, as_attachment=True, filename='Growing_conditions.pdf')
 
+
+class PlanDetailsPdfView(LoginRequiredMixin, PdfGeneratorMixin, View):
+
+    def get(self, request, pk):
+        plan = Plan.objects.get(pk=pk)
+        veggie_beds = VeggieBed.objects.filter(plan=plan)
+
+        lines = []
+        lines.append(f'PDF generated: {datetime.today().date()}')
+        lines.append(" ")
+        lines.append(f'Plan name: {plan.name}')
+        lines.append(" ")
+
+        for veggie_bed in veggie_beds:
+            lines.append(f'Bed: {veggie_bed.bed.name}')
+            lines.append(f'Family: {veggie_bed.veggie.family.name} Veggie: {veggie_bed.veggie.name} '
+                         f'Status: {veggie_bed.get_progress_display()}')
+            lines.append(" ")
+
+        buffer = self.generate_pdf(request, lines)
+
+        return FileResponse(buffer, as_attachment=True, filename=f'{plan.name}_Details.pdf')
