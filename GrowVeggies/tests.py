@@ -759,3 +759,24 @@ def test_bed_delete_view_post_other_user(bed, user2):
     response = client.post(url, data, follow=True)
     assert response.status_code == 403
 
+@pytest.mark.django_db
+def test_filter_veggies_view_get(user, family, family2, veggie, veggie2, veggie3):
+    client = Client()
+    client.force_login(user)
+    url = reverse('filter_veggies')
+    data = {'family': family.pk}
+    response = client.get(url, data)
+    assert response.status_code == 200
+    assert list(response.context['veggies']) == [veggie2, veggie]
+
+
+@pytest.mark.django_db
+def test_filter_veggies_view_get(user, family, family2, veggie, veggie2, veggie3):
+    client = Client()
+    client.force_login(user)
+    url = reverse('filter_veggies')
+    data = {'family': family.pk}
+    response = client.get(url, data)
+    assert response.status_code == 200
+    assert not list(response.context['veggies']) == [veggie3]
+

@@ -24,9 +24,20 @@ def veggie(user, family):
 def veggie2(user, family):
     return Veggie.objects.create(name='other_veggie', family=family)
 
+
+@pytest.fixture
+def veggie3(user, family2):
+    return Veggie.objects.create(name='veggie3', family=family2)
+
+
 @pytest.fixture
 def family(user):
     return VeggieFamily.objects.create(name='Family', order='1')
+
+
+@pytest.fixture
+def family2(user):
+    return VeggieFamily.objects.create(name='Family2', order='2')
 
 
 @pytest.fixture
@@ -171,6 +182,7 @@ def plan(user):
     plan = Plan.objects.create(owner=user, name='name')
     return plan
 
+
 @pytest.fixture
 def plans(user, user2):
     plans_user = []
@@ -181,4 +193,3 @@ def plans(user, user2):
         plans_user.append(plan_1)
         plans_user2.append(plan_2)
     return plans_user, plans_user2
-
