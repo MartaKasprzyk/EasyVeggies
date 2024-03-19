@@ -1,14 +1,20 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, VeggieBed, VeggieFamily
-from GrowVeggies.models import SunScale, WaterScale, SoilScale
-from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm, GrowVeggieCreateForm
-from GrowVeggies.forms import VeggieUpdateForm, CompanyUpdateForm, SeedUpdateForm, GrowVeggieUpdateForm
 from GrowVeggies.forms import BedUpdateForm
+from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm, GrowVeggieCreateForm
+from GrowVeggies.forms import SeedUpdateForm, GrowVeggieUpdateForm
 from GrowVeggies.models import PROGRESS
+from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, VeggieBed, VeggieFamily
+
+import reportlab
+import io
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
 
 
 class HomeView(View):
@@ -494,3 +500,37 @@ class BedDeleteView(UserPassesTestMixin, View):
             bed = Bed.objects.get(pk=pk)
             bed.delete()
         return redirect('plan_list')
+
+
+class SeedsPdfView(LoginRequiredMixin, View):
+    def get(self, request):
+         seeds = Seed.objects.all()
+
+         buffer = io.BytesIO()
+         p = canvas.Canvas(buffer, pagesize=letter, bottomup=0)
+         text = p.beginText()
+         text.setTextOrigin(inch, inch)
+         text.setFont('Helvetica', 12)
+
+         lines = []
+
+         for seed in seeds:
+             lines.append(
+                 f'{seed.veggie.name} - {seed.variety} ({seed.company.name})'
+             )
+             lines.append(f'Comments: {seed.comment}')
+             lines.append(" ")
+
+         for line in lines:
+            text.textLine(line)
+
+         p.drawText(text)
+         p.showPage()
+         p.save()
+         buffer.seek(0)
+
+         return FileResponse(buffer, as_attachment=True, filename='Seeds.pdf')
+
+
+
+
