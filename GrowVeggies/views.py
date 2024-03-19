@@ -417,7 +417,6 @@ class PlanUpdateView(LoginRequiredMixin, View):
         return render(request, "plan_update.html", {'plan': plan, 'veggie_beds': veggie_beds,
                                                     'families': families, 'veggies': veggies, 'progress': progress})
 
-
     def post(self, request, pk):
         plan = Plan.objects.get(pk=pk)
         plan_veggie_beds = VeggieBed.objects.filter(plan_id=plan)
@@ -502,35 +501,74 @@ class BedDeleteView(UserPassesTestMixin, View):
         return redirect('plan_list')
 
 
-class SeedsPdfView(LoginRequiredMixin, View):
-    def get(self, request):
-         seeds = Seed.objects.all()
+class PdfGeneratorMixin:
+    def generate_pdf(self, request, lines):
+        buffer = io.BytesIO()
+        p = canvas.Canvas(buffer, pagesize=letter, bottomup=0)
+        text = p.beginText()
+        text.setTextOrigin(inch, inch)
+        text.setFont('Helvetica', 12)
 
-         buffer = io.BytesIO()
-         p = canvas.Canvas(buffer, pagesize=letter, bottomup=0)
-         text = p.beginText()
-         text.setTextOrigin(inch, inch)
-         text.setFont('Helvetica', 12)
-
-         lines = []
-
-         for seed in seeds:
-             lines.append(
-                 f'{seed.veggie.name} - {seed.variety} ({seed.company.name})'
-             )
-             lines.append(f'Comments: {seed.comment}')
-             lines.append(" ")
-
-         for line in lines:
+        for line in lines:
             text.textLine(line)
 
-         p.drawText(text)
-         p.showPage()
-         p.save()
-         buffer.seek(0)
+        p.drawText(text)
+        p.showPage()
+        p.save()
+        buffer.seek(0)
 
-         return FileResponse(buffer, as_attachment=True, filename='Seeds.pdf')
+        return buffer
 
 
+class SeedsPdfView(LoginRequiredMixin, PdfGeneratorMixin, View):
+    def get(self, request):
+        user = request.user
+        seeds = Seed.objects.filter(owner=user).order_by('veggie__name')
 
+        lines = []
+
+        for seed in seeds:
+            lines.append(
+                f'{seed.veggie.name} - {seed.variety} ({seed.company.name})'
+            )
+            lines.append(f'Comments: {seed.comment}')
+            lines.append(" ")
+
+        buffer = self.generate_pdf(request, lines)
+
+        return FileResponse(buffer, as_attachment=True, filename='Seeds.pdf')
+
+
+class GrowVeggiesPdfView(LoginRequiredMixin, PdfGeneratorMixin, View):
+    def get(self, request):
+        user = request.user
+        grow_veggies_conditions = GrowVeggie.objects.filter(owner=user).order_by('veggie__name')
+
+        lines = []
+
+        for condition in grow_veggies_conditions:
+            lines.append(f'{condition.veggie.name}')
+
+            sun = [sun.name for sun in condition.sun.all().order_by('pk')]
+            formatted_sun = ', '.join(sun)
+            lines.append(f'sun: {formatted_sun}')
+
+            water = [water.name for water in condition.water.all().order_by('pk')]
+            formatted_water = ', '.join(water)
+            lines.append(f'water: {formatted_water}')
+
+            soil = [soil.name for soil in condition.soil.all().order_by('pk')]
+            formatted_soil = ', '.join(soil)
+            lines.append(f'soil: {formatted_soil}')
+
+            sow = [sow.name for sow in condition.sow.all().order_by('order')]
+            formatted_sow = ', '.join(sow)
+            lines.append(f'sun: {formatted_sow}')
+
+            lines.append(f'Comments: {condition.comment}')
+            lines.append(" ")
+
+        buffer = self.generate_pdf(request, lines)
+
+        return FileResponse(buffer, as_attachment=True, filename='Growing_conditions.pdf')
 
