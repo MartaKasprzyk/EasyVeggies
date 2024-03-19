@@ -18,6 +18,7 @@ from reportlab.lib.pagesizes import letter
 
 from datetime import datetime
 
+
 class HomeView(View):
 
     def get(self, request):
@@ -150,6 +151,20 @@ class SeedsListView(LoginRequiredMixin, View):
         seeds_list = Seed.objects.filter(owner=user).order_by('veggie__name')
         seeds_per_page = 3
 
+        veggies = Veggie.objects.all()
+        companies = Company.objects.all()
+
+        veggie = request.GET.get('veggie', '')
+        company = request.GET.get('company', '')
+        variety = request.GET.get('variety')
+
+        if variety:
+            seeds_list = seeds_list.filter(variety__icontains=variety)
+        if veggie:
+            seeds_list = seeds_list.filter(veggie=veggie)
+        if company:
+            seeds_list = seeds_list.filter(company=company)
+
         paginator = Paginator(seeds_list, seeds_per_page)
         page = request.GET.get('page')
         seeds = paginator.get_page(page)
@@ -158,8 +173,16 @@ class SeedsListView(LoginRequiredMixin, View):
 
         number_of_seeds = seeds_list.count()
 
-        return render(request, 'seeds.html', {'seeds': seeds, 'number_of_seeds': number_of_seeds,
-                                              'start_index': start_index})
+        context = {
+            'seeds': seeds,
+            'number_of_seeds': number_of_seeds,
+            'start_index': start_index,
+            'veggies': veggies,
+            'companies': companies,
+        }
+
+        return render(request, 'seeds_list.html', context)
+
 
 
 class GrowVeggieCreateView(LoginRequiredMixin, View):
@@ -237,9 +260,9 @@ class GrowVeggieListView(LoginRequiredMixin, View):
 
         number_of_conditions = grow_veggies_list.count()
 
-        return render(request, 'grow_veggies.html', {'grow_veggies': grow_veggies,
-                                                     'number_of_conditions': number_of_conditions,
-                                                     'start_index': start_index})
+        return render(request, 'grow_veggies_list.html', {'grow_veggies': grow_veggies,
+                                                          'number_of_conditions': number_of_conditions,
+                                                          'start_index': start_index})
 
 
 class PlanView(LoginRequiredMixin, View):

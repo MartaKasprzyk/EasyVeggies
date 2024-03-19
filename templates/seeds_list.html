@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div>
+        All your seeds, finally in one place!
+        <br><br>
+        Number of seeds in your collection: <b>{{ number_of_seeds }}</b> 
+        <br><br>
+        Download your collection. 
+        <button class="button"><a class="style" href="{% url 'seeds_pdf' %}">PDF</a></button>
+        <br><br>
+        Got the new seed? Add it to your collection! 
+        <button class="button">
+        <a class="style" href="{% url "seed_add" %}">ADD SEED</a>
+        </button>
+        <br><br>
+        <a class="style" href="{% url 'filter_veggies' %}">View all veggies.</a>
+        <br><br>
+        <form method="get">
+            <table class="table table-light table-stripped table-hover">
+                <tr>
+                    <th>VEGGIE</th>
+                    <th>VARIETY</th>
+                    <th>COMPANY</th>
+                </tr>
+                <tr>
+                    <td><select name="veggie" id="veggie" class="select-styling">
+                        <option value="" disabled selected style="display:none;">Choose...</option>
+                            {% for veggie in veggies %}
+                                <option value="{{ veggie.pk }}">{{ veggie.name }}</option>
+                            {% endfor %}
+                    </select></td>
+                    <td><input type="text" name="variety" placeholder="variety"><br></td>
+                    <td><select name="company" class="select-styling">
+                        <option value="" disabled selected style="display:none;">Choose...</option>
+                            {% for company in companies %}
+                                <option value="{{ company.pk }}">{{ company.name }}</option>
+                            {% endfor %}
+                    </select></td>
+            </table>
+            <input type="submit" value="FILTER" name="show_veggies" class="button">
+        </form>    
+        <br><br>
+        <table class="table table-light table-stripped table-hover">
+            <tr>
+                <th></th>
+                <th>VEGGIE</th>
+                <th>VARIETY</th>
+                <th>COMPANY</th>
+                <th>COMMENT</th>
+                <th></th>
+                <th></th>
+            </tr>
+                 {% for seed in seeds %}
+                     <tr>
+                     <td>{{ forloop.counter0|add:start_index }}</td>
+                     <td>{{ seed.veggie }}</td>
+                     <td>{{ seed.variety }}</td>
+                     <td>{{ seed.company }}</td>
+                     <td>{{ seed.comment }}</td>
+                     <td><button class="button">
+                         <a class="style" href="{% url "seed_update" pk=seed.pk %}">edit</a>
+                     </button></td>
+                     <td><button class="button">
+                         <a class="style" href="{% url "seed_delete" pk=seed.pk %}">delete</a>
+                     </button></td>
+                {% endfor %}
+        </table>
+        <br><br>
+            <nav aria-label="Page navigation example">
+              <ul class="pagination justify-content-center">
+    
+                {% if seeds.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ seeds.previous_page_number }}">&laquo; previous</a></li>
+                {% endif %}
+    
+                {% for page in seeds.paginator.page_range %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+                {% endfor %}
+    
+                {% if seeds.has_next%}
+                    <li class="page-item">
+                        <a  class="page-link" href="?page={{ seeds.next_page_number }}">next &raquo;</a></li>
+                {% endif %}
+    
+              </ul>
+            </nav>
+    </div>
+{% endblock %}
