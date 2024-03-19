@@ -46,20 +46,28 @@ def company(user):
 
 
 @pytest.fixture
+def company2(user):
+    return Company.objects.create(name='Company2')
+
+
+@pytest.fixture
 def seed(user, veggie, company):
     return Seed.objects.create(owner=user, veggie=veggie, variety='variety', company=company, comment='comment')
 
 
 @pytest.fixture
-def seeds(user, user2, veggie, company):
+def seeds(user, user2, veggie, veggie2, company, company2):
     seeds1 = []
     seeds2 = []
-    for i in range(5):
+    seeds3 = []
+    for i in range(3):
         seed1 = Seed.objects.create(owner=user, veggie=veggie, variety='variety', company=company, comment='comment')
-        seed2 = Seed.objects.create(owner=user2, veggie=veggie, variety='variety', company=company, comment='comment')
+        seed2 = Seed.objects.create(owner=user2, veggie=veggie2, variety='variety', company=company2, comment='comment')
+        seed3 = Seed.objects.create(owner=user, veggie=veggie2, variety='variety2', company=company2, comment='comment')
         seeds1.append(seed1)
         seeds2.append(seed2)
-    return seeds1, seeds2
+        seeds3.append(seed3)
+    return seeds1, seeds2, seeds3
 
 
 @pytest.fixture
