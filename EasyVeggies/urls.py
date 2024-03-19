@@ -50,4 +50,7 @@ urlpatterns = [
     path('bed/update/<int:pk>/', views.BedUpdateView.as_view(), name='bed_update'),
     path('bed/delete/<int:pk>/', views.BedDeleteView.as_view(), name='bed_delete'),
     path('veggies/show/', views.ShowVeggiesView.as_view(), name='show_veggies'),
+    path('seeds/pdf/', views.SeedsPdfView.as_view(), name='seeds_pdf'),
+    path('growveggies/pdf/', views.GrowVeggiesPdfView.as_view(), name='grow_veggies_pdf'),
+    path('plan/details/pdf/<int:pk>/', views.PlanDetailsPdfView.as_view(), name='plan_details_pdf'),
     ]

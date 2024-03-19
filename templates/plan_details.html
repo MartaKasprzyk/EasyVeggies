@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
     <div>
-        Here are the details of your plan: {{ plan.name }}
+        Here are the details of your plan: <b>{{ plan.name }}</b>
         <br><br>
+        <button class="button"><a class="style" href="{% url 'plan_details_pdf' pk=plan.pk%}">PDF</a></button>
         <button class="button"><a class="style" href="{% url 'plan_update' pk=plan.pk %}">EDIT</a></button>
         <button class="button"><a class="style" href="{% url 'plan_delete' pk=plan.pk %}">DELETE</a></button>
         <br><br>

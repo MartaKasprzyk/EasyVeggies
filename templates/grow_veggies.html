@@ -5,6 +5,9 @@
         <br><br>
         Number of growing conditions in your collection: <b>{{ number_of_conditions }}</b>
         <br><br>
+        Download your collection. 
+        <button class="button"><a class="style" href="{% url 'grow_veggies_pdf' %}">PDF</a></button>
+        <br><br>
         Growing condition for your veggie is not in the table? 
         <button class="button"><a class="style" href="{% url "grow_veggie_add" %}">ADD CONDITION</a></button>
         <br><br>

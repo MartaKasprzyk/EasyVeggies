@@ -1,15 +1,22 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, VeggieBed, VeggieFamily
-from GrowVeggies.models import SunScale, WaterScale, SoilScale
-from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm, GrowVeggieCreateForm
-from GrowVeggies.forms import VeggieUpdateForm, CompanyUpdateForm, SeedUpdateForm, GrowVeggieUpdateForm
 from GrowVeggies.forms import BedUpdateForm
+from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm, GrowVeggieCreateForm
+from GrowVeggies.forms import SeedUpdateForm, GrowVeggieUpdateForm
 from GrowVeggies.models import PROGRESS
+from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, VeggieBed, VeggieFamily
 
+import reportlab
+import io
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
+
+from datetime import datetime
 
 class HomeView(View):
 
@@ -411,7 +418,6 @@ class PlanUpdateView(LoginRequiredMixin, View):
         return render(request, "plan_update.html", {'plan': plan, 'veggie_beds': veggie_beds,
                                                     'families': families, 'veggies': veggies, 'progress': progress})
 
-
     def post(self, request, pk):
         plan = Plan.objects.get(pk=pk)
         plan_veggie_beds = VeggieBed.objects.filter(plan_id=plan)
@@ -494,3 +500,98 @@ class BedDeleteView(UserPassesTestMixin, View):
             bed = Bed.objects.get(pk=pk)
             bed.delete()
         return redirect('plan_list')
+
+
+class PdfGeneratorMixin:
+    def generate_pdf(self, request, lines):
+        buffer = io.BytesIO()
+        p = canvas.Canvas(buffer, pagesize=letter, bottomup=0)
+        text = p.beginText()
+        text.setTextOrigin(inch, inch)
+        text.setFont('Helvetica', 12)
+
+        for line in lines:
+            text.textLine(line)
+
+        p.drawText(text)
+        p.showPage()
+        p.save()
+        buffer.seek(0)
+
+        return buffer
+
+
+class SeedsPdfView(LoginRequiredMixin, PdfGeneratorMixin, View):
+    def get(self, request):
+        user = request.user
+        seeds = Seed.objects.filter(owner=user).order_by('veggie__name')
+
+        lines = []
+
+        for seed in seeds:
+            lines.append(
+                f'{seed.veggie.name} - {seed.variety} ({seed.company.name})'
+            )
+            lines.append(f'Comments: {seed.comment}')
+            lines.append(" ")
+
+        buffer = self.generate_pdf(request, lines)
+
+        return FileResponse(buffer, as_attachment=True, filename='Seeds.pdf')
+
+
+class GrowVeggiesPdfView(LoginRequiredMixin, PdfGeneratorMixin, View):
+    def get(self, request):
+        user = request.user
+        grow_veggies_conditions = GrowVeggie.objects.filter(owner=user).order_by('veggie__name')
+
+        lines = []
+
+        for condition in grow_veggies_conditions:
+            lines.append(f'{condition.veggie.name}')
+
+            sun = [sun.name for sun in condition.sun.all().order_by('pk')]
+            formatted_sun = ', '.join(sun)
+            lines.append(f'sun: {formatted_sun}')
+
+            water = [water.name for water in condition.water.all().order_by('pk')]
+            formatted_water = ', '.join(water)
+            lines.append(f'water: {formatted_water}')
+
+            soil = [soil.name for soil in condition.soil.all().order_by('pk')]
+            formatted_soil = ', '.join(soil)
+            lines.append(f'soil: {formatted_soil}')
+
+            sow = [sow.name for sow in condition.sow.all().order_by('order')]
+            formatted_sow = ', '.join(sow)
+            lines.append(f'Sowing: {formatted_sow}')
+
+            lines.append(f'Comments: {condition.comment}')
+            lines.append(" ")
+
+        buffer = self.generate_pdf(request, lines)
+
+        return FileResponse(buffer, as_attachment=True, filename='Growing_conditions.pdf')
+
+
+class PlanDetailsPdfView(LoginRequiredMixin, PdfGeneratorMixin, View):
+
+    def get(self, request, pk):
+        plan = Plan.objects.get(pk=pk)
+        veggie_beds = VeggieBed.objects.filter(plan=plan)
+
+        lines = []
+        lines.append(f'PDF generated: {datetime.today().date()}')
+        lines.append(" ")
+        lines.append(f'Plan name: {plan.name}')
+        lines.append(" ")
+
+        for veggie_bed in veggie_beds:
+            lines.append(f'Bed: {veggie_bed.bed.name}')
+            lines.append(f'Family: {veggie_bed.veggie.family.name} Veggie: {veggie_bed.veggie.name} '
+                         f'Status: {veggie_bed.get_progress_display()}')
+            lines.append(" ")
+
+        buffer = self.generate_pdf(request, lines)
+
+        return FileResponse(buffer, as_attachment=True, filename=f'{plan.name}_Details.pdf')
