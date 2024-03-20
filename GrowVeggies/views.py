@@ -48,23 +48,6 @@ class VeggieCreateView(LoginRequiredMixin, View):
         return render(request, 'form.html', {'form': form})
 
 
-# This functionality will not be allowed
-# class VeggieUpdateView(LoginRequiredMixin, View):
-#
-#     def get(self, request, pk):
-#         veggie = Veggie.objects.get(pk=pk)
-#         form = VeggieUpdateForm(instance=veggie)
-#         return render(request, 'form.html', {'form': form})
-#
-#     def post(self, request, pk):
-#         veggie = Veggie.objects.get(pk=pk)
-#         form = VeggieUpdateForm(request.POST, instance=veggie)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('seed_add', veggie.pk)
-#         return render(request, 'form.html', {'form': form})
-
-
 class CompanyCreateView(LoginRequiredMixin, View):
 
     def get(self, request):
@@ -73,28 +56,17 @@ class CompanyCreateView(LoginRequiredMixin, View):
 
     def post(self, request):
         form = CompanyCreateForm(request.POST)
+
         if form.is_valid():
             name = form.cleaned_data['name']
-            Company.objects.create(name=name)
-            return redirect('seed_add')
+            if Company.objects.filter(name__iexact=name).exists():
+                messages.info(request, "Company with this name already exists.")
+                return redirect('company_add')
+            else:
+                Company.objects.create(name=name)
+                return redirect('seed_add')
+
         return render(request, 'form.html', {'form': form})
-
-
-# This functionality will not be allowed
-# class CompanyUpdateView(LoginRequiredMixin, View):
-#
-#     def get(self, request, pk):
-#         company = Company.objects.get(pk=pk)
-#         form = CompanyUpdateForm(instance=company)
-#         return render(request, 'form.html', {'form': form})
-#
-#     def post(self, request, pk):
-#         company = Company.objects.get(pk=pk)
-#         form = CompanyUpdateForm(request.POST, instance=company)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('seed_add', company.pk)
-#         return render(request, 'form.html', {'form': form})
 
 
 class SeedCreateView(LoginRequiredMixin, View):
