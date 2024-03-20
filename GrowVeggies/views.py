@@ -90,6 +90,7 @@ class SeedCreateView(LoginRequiredMixin, View):
             else:
                 Seed.objects.create(owner=user, veggie=veggie, variety=variety, company=company, comment=comment)
                 return redirect('seeds')
+
         return render(request, 'seed_add.html', {'form': form})
 
 

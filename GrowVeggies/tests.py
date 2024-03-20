@@ -82,7 +82,7 @@ def test_company_create_view_get_not_logged():
 
 
 @pytest.mark.django_db
-def test_company_create_view_post(user):
+def test_company_create_view_post_success(user):
     client = Client()
     client.force_login(user)
     url = reverse('company_add')
@@ -134,7 +134,7 @@ def test_seed_create_view_get_not_logged():
 
 
 @pytest.mark.django_db
-def test_seed_create_view_post(user, veggie, company):
+def test_seed_create_view_post_success(user, veggie, company):
     client = Client()
     client.force_login(user)
     url = reverse('seed_add')
@@ -142,6 +142,22 @@ def test_seed_create_view_post(user, veggie, company):
     response = client.post(url, data, follow=True)
     assert response.status_code == 200
     assert Seed.objects.get(owner=user, veggie=veggie, variety='variety', company=company, comment='comment')
+
+
+@pytest.mark.django_db
+def test_seed_create_view_post_seed_exists(user, veggie, company, seed):
+    client = Client()
+    client.force_login(user)
+    url = reverse('seed_add')
+    data = {'veggie': veggie.pk,
+            'variety': 'variety',
+            'company': company.pk,
+            'comment': 'comment'
+    }
+    response = client.post(url, data, follow=True)
+    messages = list(get_messages(response.wsgi_request))
+    assert response.status_code == 200
+    assert any(str(message) == 'This seed record already exists.' for message in messages)
 
 
 @pytest.mark.django_db
