@@ -195,9 +195,12 @@ def plan(user):
 def plans(user, user2):
     plans_user = []
     plans_user2 = []
+    plans_user3=[]
     for i in range(3):
         plan_1 = Plan.objects.create(owner=user, name='name')
         plan_2 = Plan.objects.create(owner=user2, name='name2')
+        plan_3 = Plan.objects.create(owner=user, name='name2')
         plans_user.append(plan_1)
         plans_user2.append(plan_2)
-    return plans_user, plans_user2
+        plans_user3.append(plan_3)
+    return plans_user, plans_user2, plans_user3

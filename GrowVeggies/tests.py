@@ -815,3 +815,16 @@ def test_filter_seeds_view_get(user, seeds):
     assert response.status_code == 200
     assert list(response.context['seeds']) == seeds[2]
     assert not list(response.context['seeds']) == seeds[0]
+
+
+@pytest.mark.django_db
+def test_filter_plans_view_get(user, plans):
+    client = Client()
+    client.force_login(user)
+    url = reverse('plan_list')
+    data = {'plan': 'name2'}
+    response = client.get(url, data)
+    assert response.status_code == 200
+    assert list(response.context['plans']) == plans[2]
+    assert not list(response.context['plans']) == plans[0]
+
