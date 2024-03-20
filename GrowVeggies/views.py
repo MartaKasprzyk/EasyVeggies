@@ -83,8 +83,13 @@ class SeedCreateView(LoginRequiredMixin, View):
             variety = form.cleaned_data['variety']
             company = form.cleaned_data['company']
             comment = form.cleaned_data['comment']
-            Seed.objects.create(owner=user, veggie=veggie, variety=variety, company=company, comment=comment)
-            return redirect('seeds')
+            if Seed.objects.filter(owner=user, veggie=veggie,
+                                   variety__iexact=variety, company=company).exists():
+                messages.info(request, "This seed record already exists.")
+                return redirect('seed_add')
+            else:
+                Seed.objects.create(owner=user, veggie=veggie, variety=variety, company=company, comment=comment)
+                return redirect('seeds')
         return render(request, 'seed_add.html', {'form': form})
 
 
