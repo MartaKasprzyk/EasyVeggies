@@ -94,7 +94,11 @@ class SeedCreateView(LoginRequiredMixin, View):
         return render(request, 'seed_add.html', {'form': form})
 
 
-class SeedUpdateView(LoginRequiredMixin, View):
+class SeedUpdateView(UserPassesTestMixin, View):
+    def test_func(self):
+        user = self.request.user
+        seed = Seed.objects.get(pk=self.kwargs['pk'])
+        return seed.owner == user
 
     def get(self, request, pk):
         seed = Seed.objects.get(pk=pk)
@@ -194,7 +198,11 @@ class GrowVeggieCreateView(LoginRequiredMixin, View):
         return render(request, 'grow_veggie_add.html', {'form': form})
 
 
-class GrowVeggieUpdateView(LoginRequiredMixin, View):
+class GrowVeggieUpdateView(UserPassesTestMixin, View):
+    def test_func(self):
+        user = self.request.user
+        grow_veggie = GrowVeggie.objects.get(pk=self.kwargs['pk'])
+        return grow_veggie.owner == user
 
     def get(self, request, pk):
         grow_veggie = GrowVeggie.objects.get(pk=pk)
@@ -451,14 +459,24 @@ class FilterVeggiesView(LoginRequiredMixin, View):
                                                        'family': family_name})
 
 
-class PlanDetailsView(LoginRequiredMixin, View):
+class PlanDetailsView(UserPassesTestMixin, View):
+    def test_func(self):
+        user = self.request.user
+        plan = Plan.objects.get(pk=self.kwargs['pk'])
+        return plan.owner == user
+
     def get(self, request, pk):
         plan = Plan.objects.get(pk=pk)
         veggie_beds = VeggieBed.objects.filter(plan_id=pk)
         return render(request, "plan_details.html", {'plan': plan, 'veggie_beds': veggie_beds})
 
 
-class PlanUpdateView(LoginRequiredMixin, View):
+class PlanUpdateView(UserPassesTestMixin, View):
+    def test_func(self):
+        user = self.request.user
+        plan = Plan.objects.get(pk=self.kwargs['pk'])
+        return plan.owner == user
+
     def get(self, request, pk):
         plan = Plan.objects.get(pk=pk)
         veggie_beds = VeggieBed.objects.filter(plan_id=plan)
@@ -511,13 +529,22 @@ class PlanDeleteView(UserPassesTestMixin, View):
         return redirect('plan_list')
 
 
-class BedDetailsView(LoginRequiredMixin, View):
+class BedDetailsView(UserPassesTestMixin, View):
+    def test_func(self):
+        user = self.request.user
+        bed = Bed.objects.get(pk=self.kwargs['pk'])
+        return bed.owner == user
+
     def get(self, request, pk):
         bed = Bed.objects.get(pk=pk)
         return render(request, "bed_details.html", {'bed': bed})
 
 
-class BedUpdateView(LoginRequiredMixin, View):
+class BedUpdateView(UserPassesTestMixin, View):
+    def test_func(self):
+        user = self.request.user
+        bed = Bed.objects.get(pk=self.kwargs['pk'])
+        return bed.owner == user
 
     def get(self, request, pk):
         bed = Bed.objects.get(pk=pk)
