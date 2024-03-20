@@ -24,9 +24,20 @@ def veggie(user, family):
 def veggie2(user, family):
     return Veggie.objects.create(name='other_veggie', family=family)
 
+
+@pytest.fixture
+def veggie3(user, family2):
+    return Veggie.objects.create(name='veggie3', family=family2)
+
+
 @pytest.fixture
 def family(user):
     return VeggieFamily.objects.create(name='Family', order='1')
+
+
+@pytest.fixture
+def family2(user):
+    return VeggieFamily.objects.create(name='Family2', order='2')
 
 
 @pytest.fixture
@@ -35,20 +46,28 @@ def company(user):
 
 
 @pytest.fixture
+def company2(user):
+    return Company.objects.create(name='Company2')
+
+
+@pytest.fixture
 def seed(user, veggie, company):
     return Seed.objects.create(owner=user, veggie=veggie, variety='variety', company=company, comment='comment')
 
 
 @pytest.fixture
-def seeds(user, user2, veggie, company):
+def seeds(user, user2, veggie, veggie2, company, company2):
     seeds1 = []
     seeds2 = []
-    for i in range(5):
+    seeds3 = []
+    for i in range(3):
         seed1 = Seed.objects.create(owner=user, veggie=veggie, variety='variety', company=company, comment='comment')
-        seed2 = Seed.objects.create(owner=user2, veggie=veggie, variety='variety', company=company, comment='comment')
+        seed2 = Seed.objects.create(owner=user2, veggie=veggie2, variety='variety', company=company2, comment='comment')
+        seed3 = Seed.objects.create(owner=user, veggie=veggie2, variety='variety2', company=company2, comment='comment')
         seeds1.append(seed1)
         seeds2.append(seed2)
-    return seeds1, seeds2
+        seeds3.append(seed3)
+    return seeds1, seeds2, seeds3
 
 
 @pytest.fixture
@@ -99,9 +118,10 @@ def grow_veggie(user, veggie, sun_scale, water_scale, soil_scale, month):
 
 
 @pytest.fixture
-def grow_veggies(user, user2, veggie, sun_scale, water_scale, soil_scale, month):
+def grow_veggies(user, user2, veggie, veggie2, sun_scale, water_scale, soil_scale, month, sun2):
     grow_veggies_list1 = []
     grow_veggies_list2 = []
+    grow_veggies_list3 = []
     for i in range(3):
         grow_veggie_1 = GrowVeggie.objects.create(owner=user, veggie=veggie, comment='comment')
         grow_veggie_1.sun.set(sun_scale)
@@ -115,7 +135,13 @@ def grow_veggies(user, user2, veggie, sun_scale, water_scale, soil_scale, month)
         grow_veggie_2.soil.set(soil_scale)
         grow_veggie_2.sow.set(month)
         grow_veggies_list2.append(grow_veggie_2)
-    return grow_veggies_list1, grow_veggies_list2
+        grow_veggie_3 = GrowVeggie.objects.create(owner=user, veggie=veggie2, comment='comment')
+        grow_veggie_3.sun.set([sun2])
+        grow_veggie_3.water.set(water_scale)
+        grow_veggie_3.soil.set(soil_scale)
+        grow_veggie_3.sow.set(month)
+        grow_veggies_list3.append(grow_veggie_3)
+    return grow_veggies_list1, grow_veggies_list2, grow_veggies_list3
 
 
 @pytest.fixture
@@ -171,14 +197,17 @@ def plan(user):
     plan = Plan.objects.create(owner=user, name='name')
     return plan
 
+
 @pytest.fixture
 def plans(user, user2):
     plans_user = []
     plans_user2 = []
+    plans_user3=[]
     for i in range(3):
         plan_1 = Plan.objects.create(owner=user, name='name')
         plan_2 = Plan.objects.create(owner=user2, name='name2')
+        plan_3 = Plan.objects.create(owner=user, name='name2')
         plans_user.append(plan_1)
         plans_user2.append(plan_2)
-    return plans_user, plans_user2
-
+        plans_user3.append(plan_3)
+    return plans_user, plans_user2, plans_user3

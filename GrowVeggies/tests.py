@@ -218,7 +218,7 @@ def test_seeds_list_view_get(user, seeds):
     response = client.get(url)
     assert response.status_code == 200
     assert list(response.context['seeds']) == seeds[0]
-    assert response.context['number_of_seeds'] == 5
+    assert response.context['number_of_seeds'] == 3
 
 
 def test_seed_list_view_get_not_logged():
@@ -759,3 +759,83 @@ def test_bed_delete_view_post_other_user(bed, user2):
     response = client.post(url, data, follow=True)
     assert response.status_code == 403
 
+@pytest.mark.django_db
+def test_filter_veggies_view_get(user, family, family2, veggie, veggie2, veggie3):
+    client = Client()
+    client.force_login(user)
+    url = reverse('filter_veggies')
+    data = {'family': family.pk}
+    response = client.get(url, data)
+    assert response.status_code == 200
+    assert list(response.context['veggies']) == [veggie2, veggie]
+
+
+@pytest.mark.django_db
+def test_filter_veggies_view_get(user, family, family2, veggie, veggie2, veggie3):
+    client = Client()
+    client.force_login(user)
+    url = reverse('filter_veggies')
+    data = {'family': family.pk}
+    response = client.get(url, data)
+    assert response.status_code == 200
+    assert not list(response.context['veggies']) == [veggie3]
+
+
+@pytest.mark.django_db
+def test_filter_seeds_view_get(user, seeds, veggie):
+    client = Client()
+    client.force_login(user)
+    url = reverse('seeds')
+    data = {'veggie': veggie.pk}
+    response = client.get(url, data)
+    assert response.status_code == 200
+    assert list(response.context['seeds']) == seeds[0]
+    assert not list(response.context['seeds']) == seeds[2]
+
+
+@pytest.mark.django_db
+def test_filter_seeds_view_get(user, seeds, company):
+    client = Client()
+    client.force_login(user)
+    url = reverse('seeds')
+    data = {'company': company.pk}
+    response = client.get(url, data)
+    assert response.status_code == 200
+    assert list(response.context['seeds']) == seeds[0]
+    assert not list(response.context['seeds']) == seeds[2]
+
+
+@pytest.mark.django_db
+def test_filter_seeds_view_get(user, seeds):
+    client = Client()
+    client.force_login(user)
+    url = reverse('seeds')
+    data = {'variety': 'variety2'}
+    response = client.get(url, data)
+    assert response.status_code == 200
+    assert list(response.context['seeds']) == seeds[2]
+    assert not list(response.context['seeds']) == seeds[0]
+
+
+@pytest.mark.django_db
+def test_filter_plans_view_get(user, plans):
+    client = Client()
+    client.force_login(user)
+    url = reverse('plan_list')
+    data = {'plan': 'name2'}
+    response = client.get(url, data)
+    assert response.status_code == 200
+    assert list(response.context['plans']) == plans[2]
+    assert not list(response.context['plans']) == plans[0]
+
+
+@pytest.mark.django_db
+def test_filter_grow_veggies_list_view_get(user, grow_veggies, veggie2):
+    client = Client()
+    client.force_login(user)
+    url = reverse('grow_veggies')
+    data = {'veggie': veggie2.pk}
+    response = client.get(url, data)
+    assert response.status_code == 200
+    assert list(response.context['grow_veggies']) == grow_veggies[2]
+    assert not list(response.context['grow_veggies']) == grow_veggies[0]

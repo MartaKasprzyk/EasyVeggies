@@ -6,7 +6,7 @@ from django.views import View
 from GrowVeggies.forms import BedUpdateForm
 from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm, GrowVeggieCreateForm
 from GrowVeggies.forms import SeedUpdateForm, GrowVeggieUpdateForm
-from GrowVeggies.models import PROGRESS
+from GrowVeggies.models import PROGRESS, SunScale, WaterScale, SoilScale, Month
 from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, VeggieBed, VeggieFamily
 
 import reportlab
@@ -17,6 +17,7 @@ from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 
 from datetime import datetime
+
 
 class HomeView(View):
 
@@ -148,7 +149,22 @@ class SeedsListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         seeds_list = Seed.objects.filter(owner=user).order_by('veggie__name')
+        number_of_seeds = seeds_list.count()
         seeds_per_page = 3
+
+        veggies = Veggie.objects.all()
+        companies = Company.objects.all()
+
+        veggie = request.GET.get('veggie', '')
+        company = request.GET.get('company', '')
+        variety = request.GET.get('variety')
+
+        if variety:
+            seeds_list = seeds_list.filter(variety__icontains=variety)
+        if veggie:
+            seeds_list = seeds_list.filter(veggie=veggie)
+        if company:
+            seeds_list = seeds_list.filter(company=company)
 
         paginator = Paginator(seeds_list, seeds_per_page)
         page = request.GET.get('page')
@@ -156,10 +172,16 @@ class SeedsListView(LoginRequiredMixin, View):
 
         start_index = (seeds.number - 1) * seeds_per_page + 1
 
-        number_of_seeds = seeds_list.count()
+        context = {
+            'seeds': seeds,
+            'number_of_seeds': number_of_seeds,
+            'start_index': start_index,
+            'veggies': veggies,
+            'companies': companies,
+        }
 
-        return render(request, 'seeds.html', {'seeds': seeds, 'number_of_seeds': number_of_seeds,
-                                              'start_index': start_index})
+        return render(request, 'seeds_list.html', context)
+
 
 
 class GrowVeggieCreateView(LoginRequiredMixin, View):
@@ -227,7 +249,31 @@ class GrowVeggieListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         grow_veggies_list = GrowVeggie.objects.filter(owner=user).order_by('veggie__name')
+        number_of_conditions = grow_veggies_list.count()
         conditions_per_page = 3
+
+        veggies = Veggie.objects.all().order_by('name')
+        sun_scale = SunScale.objects.all().order_by('pk')
+        water_scale = WaterScale.objects.all().order_by('pk')
+        soil_scale = SoilScale.objects.all().order_by('-pk')
+        months = Month.objects.all().order_by('order')
+
+        veggie = request.GET.get('veggie', '')
+        sun = request.GET.get('sun', '')
+        water = request.GET.get('water')
+        soil = request.GET.get('soil', '')
+        sow = request.GET.get('sow', '')
+
+        if veggie:
+            grow_veggies_list = grow_veggies_list.filter(veggie=veggie)
+        if sun:
+            grow_veggies_list = grow_veggies_list.filter(sun=sun)
+        if water:
+            grow_veggies_list = grow_veggies_list.filter(water=water)
+        if soil:
+            grow_veggies_list = grow_veggies_list.filter(soil=soil)
+        if sow:
+            grow_veggies_list = grow_veggies_list.filter(sow=sow)
 
         paginator = Paginator(grow_veggies_list, conditions_per_page)
         page = request.GET.get('page')
@@ -235,11 +281,18 @@ class GrowVeggieListView(LoginRequiredMixin, View):
 
         start_index = (grow_veggies.number - 1) * conditions_per_page + 1
 
-        number_of_conditions = grow_veggies_list.count()
+        context = {
+            'grow_veggies': grow_veggies,
+            'number_of_conditions': number_of_conditions,
+            'start_index': start_index,
+            'veggies': veggies,
+            'sun_scale': sun_scale,
+            'water_scale': water_scale,
+            'soil_scale': soil_scale,
+            'months': months,
+        }
 
-        return render(request, 'grow_veggies.html', {'grow_veggies': grow_veggies,
-                                                     'number_of_conditions': number_of_conditions,
-                                                     'start_index': start_index})
+        return render(request, 'grow_veggies_list.html', context)
 
 
 class PlanView(LoginRequiredMixin, View):
@@ -376,7 +429,12 @@ class PlanListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         plan_list = Plan.objects.filter(owner=user).order_by('name')
+        number_of_plans = plan_list.count()
         plans_per_page = 5
+
+        plan = request.GET.get('plan')
+        if plan:
+            plan_list = plan_list.filter(name__icontains=plan)
 
         paginator = Paginator(plan_list, plans_per_page)
         page = request.GET.get('page')
@@ -384,21 +442,28 @@ class PlanListView(LoginRequiredMixin, View):
 
         start_index = (plans.number - 1) * plans_per_page + 1
 
-        number_of_plans = plan_list.count()
+        context = {
+            'plans': plans,
+            'number_of_plans': number_of_plans,
+            'start_index': start_index,
+            'plan': plan
+        }
 
-        return render(request, 'plan_list.html', {'plans': plans,
-                                                  'number_of_plans': number_of_plans, 'start_index': start_index})
+        return render(request, 'plan_list.html', context)
 
 
-class ShowVeggiesView(LoginRequiredMixin, View):
+class FilterVeggiesView(LoginRequiredMixin, View):
     def get(self, request):
         family = request.GET.get('family', '')
         families = VeggieFamily.objects.all().order_by("order")
+        family_name = ''
         veggies = Veggie.objects.all().order_by("name")
         if family:
             veggies = veggies.filter(family=family).order_by("name")
+            family_name = VeggieFamily.objects.filter(pk=family)
 
-        return render(request, "test.html", {'families': families, 'veggies': veggies})
+        return render(request, "filter_veggies.html", {'families': families, 'veggies': veggies,
+                                                       'family': family_name})
 
 
 class PlanDetailsView(LoginRequiredMixin, View):
