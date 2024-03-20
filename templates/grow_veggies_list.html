@@ -11,6 +11,38 @@
         Growing condition for your veggie is not in the table? 
         <button class="button"><a class="style" href="{% url "grow_veggie_add" %}">ADD CONDITION</a></button>
         <br><br>
+             <form method="get">
+            <table class="table table-light table-stripped table-hover">
+                <tr>
+                    <th>VEGGIE</th>
+                    <th>SUN</th>
+                    <th>WATER</th>
+                    <th>SOIL</th>
+                    <th>SOW</th>
+                </tr>
+                <tr>
+                    <td><select name="veggie" id="veggie" class="select-styling">
+                        <option value="" disabled selected style="display:none;">Choose...</option>
+                            {% for veggie in veggies %}
+                                <option value="{{ veggie.pk }}">{{ veggie.name }}</option>
+                            {% endfor %}
+                    </select></td>
+                    <td>{% for sun in sun_scale %}
+                         <input type="checkbox" value="{{ sun.pk }}" name="sun"> {{ sun.name }}
+                            {% endfor %}</td>
+                    <td>{% for water in water_scale %}
+                         <input type="checkbox" value="{{ water.pk }}" name="water"> {{ water.name }}
+                            {% endfor %}</td>
+                    <td>{% for soil in soil_scale %}
+                         <input type="checkbox" value="{{ soil.pk }}" name="soil"> {{ soil.name }}
+                            {% endfor %}</td>   
+                    <td>{% for month in months %}
+                         <input type="checkbox" value="{{ month.pk }}" name="sow"> {{ month.name }}
+                            {% endfor %}</td>
+            </table>
+            <input type="submit" value="FILTER" name="show_veggies" class="button">
+        </form>    
+        <br><br>
         <table class="table table-light table-stripped table-hover">
             <tr>
                 <th></th>

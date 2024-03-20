@@ -6,7 +6,7 @@ from django.views import View
 from GrowVeggies.forms import BedUpdateForm
 from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateForm, GrowVeggieCreateForm
 from GrowVeggies.forms import SeedUpdateForm, GrowVeggieUpdateForm
-from GrowVeggies.models import PROGRESS
+from GrowVeggies.models import PROGRESS, SunScale, WaterScale, SoilScale, Month
 from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, VeggieBed, VeggieFamily
 
 import reportlab
@@ -149,6 +149,7 @@ class SeedsListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         seeds_list = Seed.objects.filter(owner=user).order_by('veggie__name')
+        number_of_seeds = seeds_list.count()
         seeds_per_page = 3
 
         veggies = Veggie.objects.all()
@@ -170,8 +171,6 @@ class SeedsListView(LoginRequiredMixin, View):
         seeds = paginator.get_page(page)
 
         start_index = (seeds.number - 1) * seeds_per_page + 1
-
-        number_of_seeds = seeds_list.count()
 
         context = {
             'seeds': seeds,
@@ -250,7 +249,31 @@ class GrowVeggieListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         grow_veggies_list = GrowVeggie.objects.filter(owner=user).order_by('veggie__name')
+        number_of_conditions = grow_veggies_list.count()
         conditions_per_page = 3
+
+        veggies = Veggie.objects.all().order_by('name')
+        sun_scale = SunScale.objects.all().order_by('pk')
+        water_scale = WaterScale.objects.all().order_by('pk')
+        soil_scale = SoilScale.objects.all().order_by('-pk')
+        months = Month.objects.all().order_by('order')
+
+        veggie = request.GET.get('veggie', '')
+        sun = request.GET.get('sun', '')
+        water = request.GET.get('water')
+        soil = request.GET.get('soil', '')
+        sow = request.GET.get('sow', '')
+
+        if veggie:
+            grow_veggies_list = grow_veggies_list.filter(veggie=veggie)
+        if sun:
+            grow_veggies_list = grow_veggies_list.filter(sun=sun)
+        if water:
+            grow_veggies_list = grow_veggies_list.filter(water=water)
+        if soil:
+            grow_veggies_list = grow_veggies_list.filter(soil=soil)
+        if sow:
+            grow_veggies_list = grow_veggies_list.filter(sow=sow)
 
         paginator = Paginator(grow_veggies_list, conditions_per_page)
         page = request.GET.get('page')
@@ -258,11 +281,18 @@ class GrowVeggieListView(LoginRequiredMixin, View):
 
         start_index = (grow_veggies.number - 1) * conditions_per_page + 1
 
-        number_of_conditions = grow_veggies_list.count()
+        context = {
+            'grow_veggies': grow_veggies,
+            'number_of_conditions': number_of_conditions,
+            'start_index': start_index,
+            'veggies': veggies,
+            'sun_scale': sun_scale,
+            'water_scale': water_scale,
+            'soil_scale': soil_scale,
+            'months': months,
+        }
 
-        return render(request, 'grow_veggies_list.html', {'grow_veggies': grow_veggies,
-                                                          'number_of_conditions': number_of_conditions,
-                                                          'start_index': start_index})
+        return render(request, 'grow_veggies_list.html', context)
 
 
 class PlanView(LoginRequiredMixin, View):
