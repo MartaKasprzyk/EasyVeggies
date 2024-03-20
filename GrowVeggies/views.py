@@ -429,7 +429,12 @@ class PlanListView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         plan_list = Plan.objects.filter(owner=user).order_by('name')
+        number_of_plans = plan_list.count()
         plans_per_page = 5
+
+        plan = request.GET.get('plan')
+        if plan:
+            plan_list = plan_list.filter(name__icontains=plan)
 
         paginator = Paginator(plan_list, plans_per_page)
         page = request.GET.get('page')
@@ -437,10 +442,14 @@ class PlanListView(LoginRequiredMixin, View):
 
         start_index = (plans.number - 1) * plans_per_page + 1
 
-        number_of_plans = plan_list.count()
+        context = {
+            'plans': plans,
+            'number_of_plans': number_of_plans,
+            'start_index': start_index,
+            'plan': plan
+        }
 
-        return render(request, 'plan_list.html', {'plans': plans,
-                                                  'number_of_plans': number_of_plans, 'start_index': start_index})
+        return render(request, 'plan_list.html', context)
 
 
 class FilterVeggiesView(LoginRequiredMixin, View):
