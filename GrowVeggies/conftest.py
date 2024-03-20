@@ -118,9 +118,10 @@ def grow_veggie(user, veggie, sun_scale, water_scale, soil_scale, month):
 
 
 @pytest.fixture
-def grow_veggies(user, user2, veggie, sun_scale, water_scale, soil_scale, month):
+def grow_veggies(user, user2, veggie, veggie2, sun_scale, water_scale, soil_scale, month, sun2):
     grow_veggies_list1 = []
     grow_veggies_list2 = []
+    grow_veggies_list3 = []
     for i in range(3):
         grow_veggie_1 = GrowVeggie.objects.create(owner=user, veggie=veggie, comment='comment')
         grow_veggie_1.sun.set(sun_scale)
@@ -134,7 +135,13 @@ def grow_veggies(user, user2, veggie, sun_scale, water_scale, soil_scale, month)
         grow_veggie_2.soil.set(soil_scale)
         grow_veggie_2.sow.set(month)
         grow_veggies_list2.append(grow_veggie_2)
-    return grow_veggies_list1, grow_veggies_list2
+        grow_veggie_3 = GrowVeggie.objects.create(owner=user, veggie=veggie2, comment='comment')
+        grow_veggie_3.sun.set([sun2])
+        grow_veggie_3.water.set(water_scale)
+        grow_veggie_3.soil.set(soil_scale)
+        grow_veggie_3.sow.set(month)
+        grow_veggies_list3.append(grow_veggie_3)
+    return grow_veggies_list1, grow_veggies_list2, grow_veggies_list3
 
 
 @pytest.fixture
