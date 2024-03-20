@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib  import messages
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.views import View
@@ -33,11 +34,17 @@ class VeggieCreateView(LoginRequiredMixin, View):
 
     def post(self, request):
         form = VeggieCreateForm(request.POST)
+
         if form.is_valid():
             name = form.cleaned_data['name']
             family = form.cleaned_data['family']
-            Veggie.objects.create(name=name, family=family)
-            return redirect('seed_add')
+            if Veggie.objects.filter(name__iexact=name).exists():
+                messages.info(request, "Veggie with this name already exists.")
+                return redirect('veggie_add')
+            else:
+                Veggie.objects.create(name=name, family=family)
+                return redirect('seed_add')
+
         return render(request, 'form.html', {'form': form})
 
 
