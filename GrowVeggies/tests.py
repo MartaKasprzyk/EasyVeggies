@@ -93,6 +93,30 @@ def test_company_create_view_post(user):
 
 
 @pytest.mark.django_db
+def test_company_create_view_post_company_name_exists(user, company):
+    client = Client()
+    client.force_login(user)
+    url = reverse('company_add')
+    data = {'name': 'Company'}
+    response = client.post(url, data, follow=True)
+    messages = list(get_messages(response.wsgi_request))
+    assert response.status_code == 200
+    assert any(str(message) == 'Company with this name already exists.' for message in messages)
+
+
+@pytest.mark.django_db
+def test_company_create_view_post_company_name_exists_check_if_case_insensitive(user, company):
+    client = Client()
+    client.force_login(user)
+    url = reverse('company_add')
+    data = {'name': 'company'}
+    response = client.post(url, data, follow=True)
+    messages = list(get_messages(response.wsgi_request))
+    assert response.status_code == 200
+    assert any(str(message) == 'Company with this name already exists.' for message in messages)
+
+
+@pytest.mark.django_db
 def test_seed_create_view_get(user):
     client = Client()
     client.force_login(user)
