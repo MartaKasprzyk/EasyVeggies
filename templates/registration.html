@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
 {%  block content %}
-    
-    <div class="log_and_register">
-        <form method="post">
-            {% csrf_token %}
+    <div>
+        <div>
             {% if messages %}
                 <ul class="messagelist">
                     {% for message in messages %}
@@ -11,12 +9,24 @@
                     {% endfor %}
                 </ul>
             {% endif %}
-            {{ error }} <br>
-            <input type="text" name="username" placeholder="USERNAME" class="input"><br><br>
-            <input type="password" name="password" placeholder="PASSWORD" class="input"><br><br>
-            <input type="password" name="password_repeat" placeholder="REPEAT PASSWORD" class="input"><br><br>
-            <input type="submit" value="REGISTER" class="button"><br><br><br>
-        </form>
+            <p class="text-center">{{ error }}</p>
+        </div>
+        <div class="log_and_register">
+            <form method="post">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="USERNAME" class="input"><br><br>
+                <input type="password" name="password" placeholder="PASSWORD" class="input"><br><br>
+                <input type="password" name="password_repeat" placeholder="REPEAT PASSWORD" class="input"><br><br>
+                <input type="submit" value="REGISTER" class="button"><br><br><br>
+            </form>
+        </div>
+        <br>
+        <div>
+            {% if error == 'Weak password. Please try again.' %}
+                <p class="text-center">Password must be at least 10 characters long,<br>
+                    contain small and big letter, number and special character.<br>
+                    Please try again.</p>
+            {% endif %}
+        </div>
     </div>
-
 {% endblock %}
