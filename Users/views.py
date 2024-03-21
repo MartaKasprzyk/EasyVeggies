@@ -7,6 +7,16 @@ from django.contrib import messages
 
 
 class RegisterUserView(View):
+    def validate_password(self, request, password):
+        lst = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '-', '=', '{', '}',
+               '[', ']', '|', '\\', ':', '"', ';', "'", '<', '>', '?', ',', '.', '/', '"']
+
+        return (len(password) >= 7 and
+                any(x for x in password if x.isupper()) and
+                any(x for x in password if x.islower()) and
+                any(x for x in password if x.isdigit()) and
+                any(x for x in password if x in lst)
+                )
 
     def get(self, request):
         return render(request, 'registration.html')
@@ -20,13 +30,19 @@ class RegisterUserView(View):
             if password != password_repeat:
                 return render(request, 'registration.html', {'error': 'Passwords are different! '
                                                                       'Please try again.'})
+            else:
+                validated_password = self.validate_password(request, password)
+                if validated_password:
+                    user = User.objects.create(username=username)
+                    user.set_password(password)
+                    user.save()
 
-            user = User.objects.create(username=username)
-            user.set_password(password)
-            user.save()
+                    messages.info(request, "User registered successfully.")
+                    return redirect("home")
 
-            messages.info(request, "User registered successfully.")
-            return redirect("home")
+                else:
+                    return render(request, 'registration.html', {'error': 'Weak password. '
+                                                                          'Please try again.'})
 
         except IntegrityError:
             return render(request, 'registration.html', {'error': 'This username is already taken. '

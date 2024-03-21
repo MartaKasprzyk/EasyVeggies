@@ -1,10 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div class="form-style"> 
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p}}
-        <input type="submit" class="button">
-        </form>
+    <div>
+        <div>
+            {% if messages %}
+                <ul class="messagelist">
+                    {% for message in messages %}
+                        <li>{{ message.message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <p class="text-center text-danger">{{ error }}</p>
+        </div>
+        <div class="form-style">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" class="button">
+            </form>
+        </div>
     </div>
 {% endblock %}

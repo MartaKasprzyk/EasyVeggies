@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
     
-    <div class="log_and_register">
-        <form method="post">
-            {% csrf_token %}
+    <div>
+        <div>
             {% if messages %}
                 <ul class="messagelist">
                     {% for message in messages %}
@@ -11,12 +10,17 @@
                     {% endfor %}
                 </ul>
             {% endif %}
-            {{ error }} <br><br>
-            <input type="text" name="username" placeholder="USERNAME" class="input"><br><br>
-            <input type="password" name="password" placeholder="PASSWORD" class="input"><br><br>
-            <input type="submit" value="LOGIN" class="user"><br><br><br>
-            Not a User? Register <a href="{% url 'registration' %}">here.</a>
-        </form>
+            <p class="text-center text-danger">{{ error }}</p>
+        </div>
+        <div class="log_and_register">
+            <form method="post">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="USERNAME" class="input"><br><br>
+                <input type="password" name="password" placeholder="PASSWORD" class="input"><br><br>
+                <input type="submit" value="LOGIN" class="user"><br><br><br>
+                Not a User? Register <a href="{% url 'registration' %}">here.</a>
+            </form>
+        </div>
     </div>
 
 {% endblock %}

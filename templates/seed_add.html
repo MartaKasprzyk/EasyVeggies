@@ -1,28 +1,40 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div class="form-style">
-        Add seed to your collection. 
-        <br><br>
-        The veggie you are looking for is not on the list?
-        <br>
-        <button class="button">
-        <a class="style" href="{% url 'veggie_add' %}">Add veggie</a></button>
-        <br><br>
-        <button class="button">
-        <a class="style" href="{% url 'filter_veggies' %}">View all veggies and families.</a></button>
-        <br><br>
-        The company you are looking for is not on the list? 
-        <br>
-        <button class="button">
-        <a class="style" href="{% url 'company_add' %}">Add company</a></button> 
-        <br><br>
-        
+    <div>
         <div>
-            <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-            <input type="submit" class="button">
-            </form>
+            {% if messages %}
+                <ul class="messagelist">
+                    {% for message in messages %}
+                        <li>{{ message.message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <p class="text-center text-danger">{{ error }}</p>
+        </div>
+        <div class="form-style">
+            Add seed to your collection. 
+            <br><br>
+            The veggie you are looking for is not on the list?
+            <br>
+            <button class="button">
+            <a class="style" href="{% url 'veggie_add' %}">Add veggie</a></button>
+            <br><br>
+            <button class="button">
+            <a class="style" href="{% url 'filter_veggies' %}">View all veggies and families.</a></button>
+            <br><br>
+            The company you are looking for is not on the list? 
+            <br>
+            <button class="button">
+            <a class="style" href="{% url 'company_add' %}">Add company</a></button> 
+            <br><br>
+            
+            <div>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                <input type="submit" class="button">
+                </form>
+            </div>
         </div>
     </div>
 {% endblock %}

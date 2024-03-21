@@ -1,5 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib import messages
 from django.core.paginator import Paginator
+from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -11,7 +13,7 @@ from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, Veg
 
 import reportlab
 import io
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
@@ -33,29 +35,18 @@ class VeggieCreateView(LoginRequiredMixin, View):
 
     def post(self, request):
         form = VeggieCreateForm(request.POST)
+
         if form.is_valid():
             name = form.cleaned_data['name']
             family = form.cleaned_data['family']
-            Veggie.objects.create(name=name, family=family)
-            return redirect('seed_add')
+            if Veggie.objects.filter(name__iexact=name).exists():
+                messages.info(request, "Veggie with this name already exists.")
+                return redirect('veggie_add')
+            else:
+                Veggie.objects.create(name=name, family=family)
+                return redirect('seed_add')
+
         return render(request, 'form.html', {'form': form})
-
-
-# This functionality will not be allowed
-# class VeggieUpdateView(LoginRequiredMixin, View):
-#
-#     def get(self, request, pk):
-#         veggie = Veggie.objects.get(pk=pk)
-#         form = VeggieUpdateForm(instance=veggie)
-#         return render(request, 'form.html', {'form': form})
-#
-#     def post(self, request, pk):
-#         veggie = Veggie.objects.get(pk=pk)
-#         form = VeggieUpdateForm(request.POST, instance=veggie)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('seed_add', veggie.pk)
-#         return render(request, 'form.html', {'form': form})
 
 
 class CompanyCreateView(LoginRequiredMixin, View):
@@ -66,28 +57,17 @@ class CompanyCreateView(LoginRequiredMixin, View):
 
     def post(self, request):
         form = CompanyCreateForm(request.POST)
+
         if form.is_valid():
             name = form.cleaned_data['name']
-            Company.objects.create(name=name)
-            return redirect('seed_add')
+            if Company.objects.filter(name__iexact=name).exists():
+                messages.info(request, "Company with this name already exists.")
+                return redirect('company_add')
+            else:
+                Company.objects.create(name=name)
+                return redirect('seed_add')
+
         return render(request, 'form.html', {'form': form})
-
-
-# This functionality will not be allowed
-# class CompanyUpdateView(LoginRequiredMixin, View):
-#
-#     def get(self, request, pk):
-#         company = Company.objects.get(pk=pk)
-#         form = CompanyUpdateForm(instance=company)
-#         return render(request, 'form.html', {'form': form})
-#
-#     def post(self, request, pk):
-#         company = Company.objects.get(pk=pk)
-#         form = CompanyUpdateForm(request.POST, instance=company)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('seed_add', company.pk)
-#         return render(request, 'form.html', {'form': form})
 
 
 class SeedCreateView(LoginRequiredMixin, View):
@@ -104,12 +84,22 @@ class SeedCreateView(LoginRequiredMixin, View):
             variety = form.cleaned_data['variety']
             company = form.cleaned_data['company']
             comment = form.cleaned_data['comment']
-            Seed.objects.create(owner=user, veggie=veggie, variety=variety, company=company, comment=comment)
-            return redirect('seeds')
+            if Seed.objects.filter(owner=user, veggie=veggie,
+                                   variety__iexact=variety, company=company).exists():
+                messages.info(request, "This seed record already exists.")
+                return redirect('seed_add')
+            else:
+                Seed.objects.create(owner=user, veggie=veggie, variety=variety, company=company, comment=comment)
+                return redirect('seeds')
+
         return render(request, 'seed_add.html', {'form': form})
 
 
-class SeedUpdateView(LoginRequiredMixin, View):
+class SeedUpdateView(UserPassesTestMixin, View):
+    def test_func(self):
+        user = self.request.user
+        seed = Seed.objects.get(pk=self.kwargs['pk'])
+        return seed.owner == user
 
     def get(self, request, pk):
         seed = Seed.objects.get(pk=pk)
@@ -183,7 +173,6 @@ class SeedsListView(LoginRequiredMixin, View):
         return render(request, 'seeds_list.html', context)
 
 
-
 class GrowVeggieCreateView(LoginRequiredMixin, View):
 
     def get(self, request):
@@ -209,7 +198,11 @@ class GrowVeggieCreateView(LoginRequiredMixin, View):
         return render(request, 'grow_veggie_add.html', {'form': form})
 
 
-class GrowVeggieUpdateView(LoginRequiredMixin, View):
+class GrowVeggieUpdateView(UserPassesTestMixin, View):
+    def test_func(self):
+        user = self.request.user
+        grow_veggie = GrowVeggie.objects.get(pk=self.kwargs['pk'])
+        return grow_veggie.owner == user
 
     def get(self, request, pk):
         grow_veggie = GrowVeggie.objects.get(pk=pk)
@@ -301,9 +294,33 @@ class PlanView(LoginRequiredMixin, View):
 
 
 class PlanCommonFunctionsMixin:
+    def validate_form(self, request, template):
+        beds = [name.strip() for name in request.POST.getlist('bed_name')]
+        plan_name = request.POST.get('plan_name').strip()
+        veggies = request.POST.getlist('veggie')
+        progress = request.POST.getlist('progress')
+
+        for bed in beds:
+            if bed == '':
+                messages.info(request, "Input bed names.")
+                return render(request, template)
+
+        if plan_name == '':
+            messages.info(request, "Plan name required.")
+            return render(request, template)
+
+        if len(veggies) != len(beds):
+            messages.info(request, "Veggie or Veggies were not chosen.")
+            return render(request, template)
+
+        if len(progress) != len(beds):
+            messages.info(request, "Progress was not chosen.")
+            return render(request, template)
+
+        return True
+
     def create_bed_objects(self, request):
         user = request.user
-
         user_beds = request.POST.getlist('bed_name')
 
         bed_objs_pks = []
@@ -315,11 +332,9 @@ class PlanCommonFunctionsMixin:
 
     def create_plan_object(self, request):
         user = request.user
-
         plan_name = request.POST.get('plan_name')
         plan = Plan.objects.create(owner=user, name=plan_name)
         plan_id = plan.pk
-
         return plan_id
 
     def create_veggie_bed_objects(self, request, amount, bed_objs_pks, plan_id):
@@ -343,22 +358,30 @@ class PlanCreateOption1View(PlanCommonFunctionsMixin, LoginRequiredMixin, View):
         return render(request, 'plan_option1.html')
 
     def post(self, request):
-        beds_amount = int(request.POST.get('beds_amount'))
-        beds = [bed for bed in range(beds_amount)]
+        try:
+            beds_amount = int(request.POST.get('beds_amount'))
+            beds = [bed for bed in range(beds_amount)]
 
-        veggies = Veggie.objects.all().order_by('name')
-        families = VeggieFamily.objects.all().order_by('order')
-        progress = sorted(PROGRESS, key=lambda x: x[0])
+            veggies = Veggie.objects.all().order_by('name')
+            families = VeggieFamily.objects.all().order_by('order')
+            progress = sorted(PROGRESS, key=lambda x: x[0])
 
-        plan = request.POST.get('save_plan')
-        if plan == "SAVE PLAN":
-            amount = int(request.POST.get('beds_amount'))
+            plan = request.POST.get('save_plan')
+            if plan == "SAVE PLAN":
+                validated = self.validate_form(request, 'plan_option1.html')
 
-            bed_objs_pks = self.create_bed_objects(request)
-            plan_id = self.create_plan_object(request)
-            self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+                if validated is True and validated is not HttpResponse:
+                    amount = int(request.POST.get('beds_amount'))
 
-            return redirect('plan_list')
+                    bed_objs_pks = self.create_bed_objects(request)
+                    plan_id = self.create_plan_object(request)
+                    self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+
+                    return redirect('plan_list')
+
+        except ValueError:
+            messages.info(request, "Number of beds must be an integer greater that 0.")
+            return render(request, 'plan_option1.html')
 
         return render(request, 'plan_option1.html', {'beds_amount': beds_amount, 'beds': beds,
                                                      'veggies': veggies, 'families': families, 'progress': progress})
@@ -374,22 +397,30 @@ class PlanCreateOption2View(PlanCommonFunctionsMixin, LoginRequiredMixin, View):
         return render(request, 'plan_option2.html')
 
     def post(self, request):
-        beds_amount = int(request.POST.get('beds_amount'))
-        beds = [bed for bed in range(beds_amount)]
+        try:
+            beds_amount = int(request.POST.get('beds_amount'))
+            beds = [bed for bed in range(beds_amount)]
 
-        veggies = Veggie.objects.all().order_by('name')
-        families = VeggieFamily.objects.all().order_by('order')
-        progress = sorted(PROGRESS, key=lambda x: x[0])
+            veggies = Veggie.objects.all().order_by('name')
+            families = VeggieFamily.objects.all().order_by('order')
+            progress = sorted(PROGRESS, key=lambda x: x[0])
 
-        plan = request.POST.get('save_plan')
-        if plan == "SAVE PLAN":
-            amount = int(request.POST.get('beds_amount'))
+            plan = request.POST.get('save_plan')
+            if plan == "SAVE PLAN":
+                validated = self.validate_form(request,'plan_option2.html')
 
-            bed_objs_pks = self.create_bed_objects(request)
-            plan_id = self.create_plan_object(request)
-            self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+                if validated is True and validated is not HttpResponse:
+                    amount = int(request.POST.get('beds_amount'))
 
-            return redirect('plan_list')
+                    bed_objs_pks = self.create_bed_objects(request)
+                    plan_id = self.create_plan_object(request)
+                    self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+
+                    return redirect('plan_list')
+
+        except ValueError:
+            messages.info(request, "Number of beds must be an integer greater that 0.")
+            return render(request, 'plan_option2.html')
 
         return render(request, 'plan_option2.html', {'beds_amount': beds_amount, 'beds': beds,
                                                      'veggies': veggies, 'families': families, 'progress': progress})
@@ -414,15 +445,30 @@ class PlanCreateOption2UploadView(PlanCommonFunctionsMixin, LoginRequiredMixin, 
                                                             'amount': amount})
 
     def post(self, request):
+        plans = Plan.objects.all()
+        veggie_beds = VeggieBed.objects.all()
+        amount = veggie_beds.count()
+        families = VeggieFamily.objects.all().order_by('order')
+        veggies = Veggie.objects.all().order_by('name')
+        progress = sorted(PROGRESS, key=lambda x: x[0])
+
         plan = request.POST.get('save_plan')
         if plan == "SAVE PLAN":
-            amount = int(request.POST.get('amount'))
+            validated = self.validate_form(request, 'plan_option2_upload.html')
 
-            bed_objs_pks = self.create_bed_objects(request)
-            plan_id = self.create_plan_object(request)
-            self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+            if validated is True and validated is not HttpResponse:
+                amount = int(request.POST.get('amount'))
 
-            return redirect('plan_list')
+                bed_objs_pks = self.create_bed_objects(request)
+                plan_id = self.create_plan_object(request)
+                self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+
+                return redirect('plan_list')
+
+        return render(request, 'plan_option2_upload.html', {'plans': plans,
+                                                            'veggie_beds': veggie_beds, 'families': families,
+                                                            'veggies': veggies, 'progress': progress,
+                                                            'amount': amount})
 
 
 class PlanListView(LoginRequiredMixin, View):
@@ -466,14 +512,24 @@ class FilterVeggiesView(LoginRequiredMixin, View):
                                                        'family': family_name})
 
 
-class PlanDetailsView(LoginRequiredMixin, View):
+class PlanDetailsView(UserPassesTestMixin, View):
+    def test_func(self):
+        user = self.request.user
+        plan = Plan.objects.get(pk=self.kwargs['pk'])
+        return plan.owner == user
+
     def get(self, request, pk):
         plan = Plan.objects.get(pk=pk)
         veggie_beds = VeggieBed.objects.filter(plan_id=pk)
         return render(request, "plan_details.html", {'plan': plan, 'veggie_beds': veggie_beds})
 
 
-class PlanUpdateView(LoginRequiredMixin, View):
+class PlanUpdateView(UserPassesTestMixin, View):
+    def test_func(self):
+        user = self.request.user
+        plan = Plan.objects.get(pk=self.kwargs['pk'])
+        return plan.owner == user
+
     def get(self, request, pk):
         plan = Plan.objects.get(pk=pk)
         veggie_beds = VeggieBed.objects.filter(plan_id=plan)
@@ -526,13 +582,22 @@ class PlanDeleteView(UserPassesTestMixin, View):
         return redirect('plan_list')
 
 
-class BedDetailsView(LoginRequiredMixin, View):
+class BedDetailsView(UserPassesTestMixin, View):
+    def test_func(self):
+        user = self.request.user
+        bed = Bed.objects.get(pk=self.kwargs['pk'])
+        return bed.owner == user
+
     def get(self, request, pk):
         bed = Bed.objects.get(pk=pk)
         return render(request, "bed_details.html", {'bed': bed})
 
 
-class BedUpdateView(LoginRequiredMixin, View):
+class BedUpdateView(UserPassesTestMixin, View):
+    def test_func(self):
+        user = self.request.user
+        bed = Bed.objects.get(pk=self.kwargs['pk'])
+        return bed.owner == user
 
     def get(self, request, pk):
         bed = Bed.objects.get(pk=pk)

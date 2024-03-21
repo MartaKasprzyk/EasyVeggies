@@ -1,6 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
     <div>
+        <div>
+            {% if messages %}
+                <ul class="messagelist text-danger">
+                    {% for message in messages %}
+                        <li>{{ message.message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <p class="text-center text-danger">{{ error }}</p>
+        </div>
+    <div>
     Choose previous plan
     <br><br>
     <form method="get">
@@ -65,6 +76,7 @@
             {% endfor %}
         </table>
     </form>
+    </div>
     </div>
 
 {% block script %}

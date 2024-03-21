@@ -1,4 +1,5 @@
 import pytest
+from django.contrib.messages import get_messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import Client
 from django.urls import reverse
@@ -7,7 +8,7 @@ from GrowVeggies.forms import SeedCreateForm, VeggieCreateForm, CompanyCreateFor
 from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Bed, VeggieBed, Plan
 
 
-def test_base_view_get():
+def test_home_view_get():
     url = reverse('home')
     client = Client()
     response = client.get(url)
@@ -15,7 +16,7 @@ def test_base_view_get():
 
 
 @pytest.mark.django_db
-def test_test_base_view_get_logged_user(user):
+def test_test_home_view_get_logged_user(user):
     client = Client()
     client.force_login(user)
     url = reverse('home')
@@ -41,32 +42,25 @@ def test_veggie_create_view_get_not_logged():
 
 
 @pytest.mark.django_db
-def test_veggie_create_view_post(user, family):
+def test_veggie_create_view_post_success(user, family):
     client = Client()
     client.force_login(user)
     url = reverse('veggie_add')
     data = {'name': 'veggie_name', 'family': family.pk}
     response = client.post(url, data, follow=True)
     assert response.status_code == 200
-    assert Veggie.objects.get(name='veggie_name', family=1)
+    assert Veggie.objects.get(name='veggie_name', family=family)
 
-
-# feature will not be allowed in the current version
-# @pytest.mark.django_db
-# def test_veggie_update_view_get(user, veggie):
-#     client = Client()
-#     client.force_login(user)
-#     url = reverse('veggie_update', kwargs={'pk': veggie.pk})
-#     response = client.get(url, follow=True)
-#     assert response.status_code == 200
-
-# feature will not be allowed in the current version
-# @pytest.mark.django_db
-# def test_veggie_update_view_get_not_logged(veggie):
-#     client = Client()
-#     url = reverse('veggie_update', kwargs={'pk': veggie.pk})
-#     response = client.get(url)
-#     assert response.status_code == 302
+@pytest.mark.django_db
+def test_veggie_create_view_post_veggie_name_exists(user, veggie, family):
+    client = Client()
+    client.force_login(user)
+    url = reverse('veggie_add')
+    data = {'name': 'veggie', 'family': family.pk}
+    response = client.post(url, data, follow=True)
+    messages = list(get_messages(response.wsgi_request))
+    assert response.status_code == 200
+    assert any(str(message) == 'Veggie with this name already exists.' for message in messages)
 
 
 @pytest.mark.django_db
@@ -88,7 +82,7 @@ def test_company_create_view_get_not_logged():
 
 
 @pytest.mark.django_db
-def test_company_create_view_post(user):
+def test_company_create_view_post_success(user):
     client = Client()
     client.force_login(user)
     url = reverse('company_add')
@@ -98,22 +92,28 @@ def test_company_create_view_post(user):
     assert Company.objects.get(name='Company_name')
 
 
-# feature will not be allowed in the current version
-# @pytest.mark.django_db
-# def test_company_update_view_get(user, company):
-#     client = Client()
-#     client.force_login(user)
-#     url = reverse('company_update', kwargs={'pk': company.pk})
-#     response = client.get(url, follow=True)
-#     assert response.status_code == 200
+@pytest.mark.django_db
+def test_company_create_view_post_company_name_exists(user, company):
+    client = Client()
+    client.force_login(user)
+    url = reverse('company_add')
+    data = {'name': 'Company'}
+    response = client.post(url, data, follow=True)
+    messages = list(get_messages(response.wsgi_request))
+    assert response.status_code == 200
+    assert any(str(message) == 'Company with this name already exists.' for message in messages)
 
-# feature will not be allowed in the current version
-# @pytest.mark.django_db
-# def test_company_update_view_get_not_logged(company):
-#     client = Client()
-#     url = reverse('company_update', kwargs={'pk': company.pk})
-#     response = client.get(url)
-#     assert response.status_code == 302
+
+@pytest.mark.django_db
+def test_company_create_view_post_company_name_exists_check_if_case_insensitive(user, company):
+    client = Client()
+    client.force_login(user)
+    url = reverse('company_add')
+    data = {'name': 'company'}
+    response = client.post(url, data, follow=True)
+    messages = list(get_messages(response.wsgi_request))
+    assert response.status_code == 200
+    assert any(str(message) == 'Company with this name already exists.' for message in messages)
 
 
 @pytest.mark.django_db
@@ -134,7 +134,7 @@ def test_seed_create_view_get_not_logged():
 
 
 @pytest.mark.django_db
-def test_seed_create_view_post(user, veggie, company):
+def test_seed_create_view_post_success(user, veggie, company):
     client = Client()
     client.force_login(user)
     url = reverse('seed_add')
@@ -142,6 +142,22 @@ def test_seed_create_view_post(user, veggie, company):
     response = client.post(url, data, follow=True)
     assert response.status_code == 200
     assert Seed.objects.get(owner=user, veggie=veggie, variety='variety', company=company, comment='comment')
+
+
+@pytest.mark.django_db
+def test_seed_create_view_post_seed_exists(user, veggie, company, seed):
+    client = Client()
+    client.force_login(user)
+    url = reverse('seed_add')
+    data = {'veggie': veggie.pk,
+            'variety': 'variety',
+            'company': company.pk,
+            'comment': 'comment'
+    }
+    response = client.post(url, data, follow=True)
+    messages = list(get_messages(response.wsgi_request))
+    assert response.status_code == 200
+    assert any(str(message) == 'This seed record already exists.' for message in messages)
 
 
 @pytest.mark.django_db
