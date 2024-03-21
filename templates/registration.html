@@ -9,7 +9,7 @@
                     {% endfor %}
                 </ul>
             {% endif %}
-            <p class="text-center">{{ error }}</p>
+            <p class="text-center text-danger">{{ error }}</p>
         </div>
         <div class="log_and_register">
             <form method="post">
@@ -23,7 +23,7 @@
         <br>
         <div>
             {% if error == 'Weak password. Please try again.' %}
-                <p class="text-center">Password must be at least 10 characters long,<br>
+                <p class="text-center text-danger">Password must be at least 10 characters long,<br>
                     contain small and big letter, number and special character.<br>
                     Please try again.</p>
             {% endif %}

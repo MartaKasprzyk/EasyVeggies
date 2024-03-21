@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib  import messages
+from django.contrib import messages
 from django.core.paginator import Paginator
+from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -12,7 +13,7 @@ from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, Veg
 
 import reportlab
 import io
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
@@ -172,7 +173,6 @@ class SeedsListView(LoginRequiredMixin, View):
         return render(request, 'seeds_list.html', context)
 
 
-
 class GrowVeggieCreateView(LoginRequiredMixin, View):
 
     def get(self, request):
@@ -294,9 +294,33 @@ class PlanView(LoginRequiredMixin, View):
 
 
 class PlanCommonFunctionsMixin:
+    def validate_form(self, request, template):
+        beds = [name.strip() for name in request.POST.getlist('bed_name')]
+        plan_name = request.POST.get('plan_name').strip()
+        veggies = request.POST.getlist('veggie')
+        progress = request.POST.getlist('progress')
+
+        for bed in beds:
+            if bed == '':
+                messages.info(request, "Input bed names.")
+                return render(request, template)
+
+        if plan_name == '':
+            messages.info(request, "Plan name required.")
+            return render(request, template)
+
+        if len(veggies) != len(beds):
+            messages.info(request, "Veggie or Veggies were not chosen.")
+            return render(request, template)
+
+        if len(progress) != len(beds):
+            messages.info(request, "Progress was not chosen.")
+            return render(request, template)
+
+        return True
+
     def create_bed_objects(self, request):
         user = request.user
-
         user_beds = request.POST.getlist('bed_name')
 
         bed_objs_pks = []
@@ -308,11 +332,9 @@ class PlanCommonFunctionsMixin:
 
     def create_plan_object(self, request):
         user = request.user
-
         plan_name = request.POST.get('plan_name')
         plan = Plan.objects.create(owner=user, name=plan_name)
         plan_id = plan.pk
-
         return plan_id
 
     def create_veggie_bed_objects(self, request, amount, bed_objs_pks, plan_id):
@@ -336,22 +358,30 @@ class PlanCreateOption1View(PlanCommonFunctionsMixin, LoginRequiredMixin, View):
         return render(request, 'plan_option1.html')
 
     def post(self, request):
-        beds_amount = int(request.POST.get('beds_amount'))
-        beds = [bed for bed in range(beds_amount)]
+        try:
+            beds_amount = int(request.POST.get('beds_amount'))
+            beds = [bed for bed in range(beds_amount)]
 
-        veggies = Veggie.objects.all().order_by('name')
-        families = VeggieFamily.objects.all().order_by('order')
-        progress = sorted(PROGRESS, key=lambda x: x[0])
+            veggies = Veggie.objects.all().order_by('name')
+            families = VeggieFamily.objects.all().order_by('order')
+            progress = sorted(PROGRESS, key=lambda x: x[0])
 
-        plan = request.POST.get('save_plan')
-        if plan == "SAVE PLAN":
-            amount = int(request.POST.get('beds_amount'))
+            plan = request.POST.get('save_plan')
+            if plan == "SAVE PLAN":
+                validated = self.validate_form(request, 'plan_option1.html')
 
-            bed_objs_pks = self.create_bed_objects(request)
-            plan_id = self.create_plan_object(request)
-            self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+                if validated is True and validated is not HttpResponse:
+                    amount = int(request.POST.get('beds_amount'))
 
-            return redirect('plan_list')
+                    bed_objs_pks = self.create_bed_objects(request)
+                    plan_id = self.create_plan_object(request)
+                    self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+
+                    return redirect('plan_list')
+
+        except ValueError:
+            messages.info(request, "Number of beds must be an integer greater that 0.")
+            return render(request, 'plan_option1.html')
 
         return render(request, 'plan_option1.html', {'beds_amount': beds_amount, 'beds': beds,
                                                      'veggies': veggies, 'families': families, 'progress': progress})
@@ -367,22 +397,30 @@ class PlanCreateOption2View(PlanCommonFunctionsMixin, LoginRequiredMixin, View):
         return render(request, 'plan_option2.html')
 
     def post(self, request):
-        beds_amount = int(request.POST.get('beds_amount'))
-        beds = [bed for bed in range(beds_amount)]
+        try:
+            beds_amount = int(request.POST.get('beds_amount'))
+            beds = [bed for bed in range(beds_amount)]
 
-        veggies = Veggie.objects.all().order_by('name')
-        families = VeggieFamily.objects.all().order_by('order')
-        progress = sorted(PROGRESS, key=lambda x: x[0])
+            veggies = Veggie.objects.all().order_by('name')
+            families = VeggieFamily.objects.all().order_by('order')
+            progress = sorted(PROGRESS, key=lambda x: x[0])
 
-        plan = request.POST.get('save_plan')
-        if plan == "SAVE PLAN":
-            amount = int(request.POST.get('beds_amount'))
+            plan = request.POST.get('save_plan')
+            if plan == "SAVE PLAN":
+                validated = self.validate_form(request,'plan_option2.html')
 
-            bed_objs_pks = self.create_bed_objects(request)
-            plan_id = self.create_plan_object(request)
-            self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+                if validated is True and validated is not HttpResponse:
+                    amount = int(request.POST.get('beds_amount'))
 
-            return redirect('plan_list')
+                    bed_objs_pks = self.create_bed_objects(request)
+                    plan_id = self.create_plan_object(request)
+                    self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+
+                    return redirect('plan_list')
+
+        except ValueError:
+            messages.info(request, "Number of beds must be an integer greater that 0.")
+            return render(request, 'plan_option2.html')
 
         return render(request, 'plan_option2.html', {'beds_amount': beds_amount, 'beds': beds,
                                                      'veggies': veggies, 'families': families, 'progress': progress})
@@ -407,15 +445,30 @@ class PlanCreateOption2UploadView(PlanCommonFunctionsMixin, LoginRequiredMixin, 
                                                             'amount': amount})
 
     def post(self, request):
+        plans = Plan.objects.all()
+        veggie_beds = VeggieBed.objects.all()
+        amount = veggie_beds.count()
+        families = VeggieFamily.objects.all().order_by('order')
+        veggies = Veggie.objects.all().order_by('name')
+        progress = sorted(PROGRESS, key=lambda x: x[0])
+
         plan = request.POST.get('save_plan')
         if plan == "SAVE PLAN":
-            amount = int(request.POST.get('amount'))
+            validated = self.validate_form(request, 'plan_option2_upload.html')
 
-            bed_objs_pks = self.create_bed_objects(request)
-            plan_id = self.create_plan_object(request)
-            self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+            if validated is True and validated is not HttpResponse:
+                amount = int(request.POST.get('amount'))
 
-            return redirect('plan_list')
+                bed_objs_pks = self.create_bed_objects(request)
+                plan_id = self.create_plan_object(request)
+                self.create_veggie_bed_objects(request, amount, bed_objs_pks, plan_id)
+
+                return redirect('plan_list')
+
+        return render(request, 'plan_option2_upload.html', {'plans': plans,
+                                                            'veggie_beds': veggie_beds, 'families': families,
+                                                            'veggies': veggies, 'progress': progress,
+                                                            'amount': amount})
 
 
 class PlanListView(LoginRequiredMixin, View):
