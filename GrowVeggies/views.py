@@ -1,7 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -11,7 +10,6 @@ from GrowVeggies.forms import SeedUpdateForm, GrowVeggieUpdateForm
 from GrowVeggies.models import PROGRESS, SunScale, WaterScale, SoilScale, Month
 from GrowVeggies.models import Seed, Veggie, Company, GrowVeggie, Plan, Bed, VeggieBed, VeggieFamily
 
-import reportlab
 import io
 from django.http import FileResponse, HttpResponse
 from reportlab.pdfgen import canvas
@@ -428,8 +426,9 @@ class PlanCreateOption2View(PlanCommonFunctionsMixin, LoginRequiredMixin, View):
 
 class PlanCreateOption2UploadView(PlanCommonFunctionsMixin, LoginRequiredMixin, View):
     def get(self, request):
+        user = request.user
         plan = request.GET.get('prev_plan')
-        plans = Plan.objects.all()
+        plans = Plan.objects.filter(owner=user).order_by('name')
         veggie_beds = VeggieBed.objects.all()
         amount = veggie_beds.count()
         families = VeggieFamily.objects.all().order_by('order')
@@ -445,7 +444,8 @@ class PlanCreateOption2UploadView(PlanCommonFunctionsMixin, LoginRequiredMixin, 
                                                             'amount': amount})
 
     def post(self, request):
-        plans = Plan.objects.all()
+        user = request.user
+        plans = Plan.objects.filter(owner=user).order_by('name')
         veggie_beds = VeggieBed.objects.all()
         amount = veggie_beds.count()
         families = VeggieFamily.objects.all().order_by('order')

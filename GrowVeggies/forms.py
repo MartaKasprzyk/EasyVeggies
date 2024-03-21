@@ -62,6 +62,7 @@ class SeedUpdateForm(forms.ModelForm):
         self.fields['veggie'].queryset = self.fields['veggie'].queryset.order_by('name')
         self.fields['company'].queryset = self.fields['company'].queryset.order_by('name')
 
+
 class GrowVeggieCreateForm(forms.ModelForm):
     class Meta:
         model = GrowVeggie

@@ -202,7 +202,7 @@ def plan(user):
 def plans(user, user2):
     plans_user = []
     plans_user2 = []
-    plans_user3=[]
+    plans_user3 = []
     for i in range(3):
         plan_1 = Plan.objects.create(owner=user, name='name')
         plan_2 = Plan.objects.create(owner=user2, name='name2')
