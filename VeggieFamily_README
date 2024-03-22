@@ -1,0 +1,4 @@
+At the current stage, for the application to work properly,
+you need to populate your database with VeggieFamily objects.
+
+File VeggieFamily.csv contains required data.
